@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bubble Sort Visualizer - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">ALGO<span>LAB</span></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="visualizer.html" class="active">Visualizer</a></li>
+        <li><a href="maze.html">Maze Lab</a></li>
+        <li><a href="index.html#about">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 40px 0 10px;">
+    <div class="container">
+      <h1>Bubble Sort <span class="highlight">Visualizer</span></h1>
+      <p>Generate a random array, then step through the real Bubble Sort algorithm.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN VISUALIZER LAYOUT ===================== -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="visualizer-layout">
+
+        <!-- LEFT: array display + controls -->
+        <div class="panel">
+
+          <!-- Array size input + generate button -->
+          <div class="controls">
+            <label for="array-size-input">Array size:</label>
+            <input type="number" id="array-size-input" min="4" max="30" value="12" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--color-border);" />
+            <button class="btn btn-secondary" id="generate-btn">Generate New Array</button>
+          </div>
+
+          <!-- The bars representing the array will be injected here by JS -->
+          <div id="array-container" aria-label="Array visualization"></div>
+
+          <!-- Step message box -->
+          <div id="step-message">Click "Generate New Array" to begin.</div>
+
+          <!-- Playback controls -->
+          <div class="controls">
+            <button class="btn btn-primary" id="play-btn" disabled>Play</button>
+            <button class="btn btn-secondary" id="pause-btn" disabled>Pause</button>
+            <button class="btn btn-secondary" id="next-btn" disabled>Next Step</button>
+            <button class="btn btn-secondary" id="reset-btn" disabled>Reset</button>
+
+            <div class="speed-group">
+              <label for="speed-range">Speed</label>
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
+              <input type="range" id="speed-range" min="100" max="1500" value="1000" step="100" />
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: info panel -->
+        <div class="panel">
+          <h3>Execution Info</h3>
+          <ul class="info-list">
+            <li><span>Current Step</span> <span id="current-step-value">0 / 0</span></li>
+            <li><span>Comparisons</span> <span id="comparisons-value">0</span></li>
+            <li><span>Swaps</span> <span id="swaps-value">0</span></li>
+            <li><span>Status</span> <span id="status-value">Idle</span></li>
+          </ul>
+
+          <h3 style="margin-top: 20px;">Algorithm Explanation</h3>
+          <p style="color: var(--color-text-light); font-size: 0.9rem; margin-top: 8px;">
+            Bubble Sort repeatedly steps through the array, compares each pair of
+            adjacent elements, and swaps them if they are in the wrong order.
+            This process repeats until no swaps are needed, meaning the array is sorted.
+            Larger elements "bubble" toward the end of the array on each pass.
+          </p>
+
+          <h3 style="margin-top: 20px;">Complexity</h3>
+          <table class="complexity-table">
+            <tr><th>Case</th><th>Time Complexity</th></tr>
+            <tr><td>Best Case</td><td>O(n)</td></tr>
+            <tr><td>Average Case</td><td>O(n&sup2;)</td></tr>
+            <tr><td>Worst Case</td><td>O(n&sup2;)</td></tr>
+            <tr><th colspan="2">Space Complexity</th></tr>
+            <tr><td colspan="2">O(1) &mdash; sorts in place</td></tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Built as a B.Tech Data Structures & Algorithms project.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/visualizer.js"></script>
+</body>
+</html>

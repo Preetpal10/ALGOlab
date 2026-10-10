@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithm Library - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">ALGO<span>LAB</span></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="algorithms.html" class="active">Algorithms</a></li>
+        <li><a href="visualizer.html">Visualizer</a></li>
+        <li><a href="maze.html">Maze Lab</a></li>
+        <li><a href="index.html#about">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 50px 0 20px;">
+    <div class="container">
+      <h1>Algorithm <span class="highlight">Library</span></h1>
+      <p>Pick a category to explore. Bubble Sort and Maze Lab are fully interactive in this build — everything else is coming soon.</p>
+    </div>
+  </section>
+
+  <!-- ===================== CATEGORY GRID ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="grid" id="algo-grid">
+        <!-- Each category card below is static HTML.
+             data-status tells main.js whether the card is clickable. -->
+
+        <div class="card algo-card" data-status="ready">
+          <span class="badge badge-ready">Available</span>
+          <h3>Sorting - Bubble Sort</h3>
+          <p>Watch elements get compared and swapped pass by pass until the array is sorted.</p>
+          <a href="visualizer.html" class="btn btn-primary">Open Visualizer</a>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Searching</h3>
+          <p>Linear Search, Binary Search and more — visualizers coming in the next milestone.</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Stack</h3>
+          <p>Push, pop, and peek operations visualized as a live stack structure.</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Queue</h3>
+          <p>Enqueue and dequeue operations shown step-by-step.</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Linked List</h3>
+          <p>Insertion, deletion, and traversal of singly/doubly linked lists.</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Trees</h3>
+          <p>Binary trees, BSTs, and tree traversals (inorder, preorder, postorder).</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card disabled" data-status="soon">
+          <span class="badge badge-soon">Coming Soon</span>
+          <h3>Graphs</h3>
+          <p>BFS, DFS, and shortest-path algorithms on an interactive graph.</p>
+          <button class="btn btn-secondary" disabled>Coming Soon</button>
+        </div>
+
+        <div class="card algo-card" data-status="ready">
+          <span class="badge badge-ready">Available</span>
+          <h3>Maze Lab</h3>
+          <p>Generate a maze and watch BFS or DFS explore it in real time. (Dijkstra & A* coming soon.)</p>
+          <a href="maze.html" class="btn btn-primary">Open Maze Lab</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Built as a B.Tech Data Structures & Algorithms project.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
