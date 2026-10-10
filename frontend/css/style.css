@@ -151,6 +151,16 @@ img {
   background: #eef2ff;
 }
 
+.btn-success {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #16a34a;
+  box-shadow: var(--shadow-hover);
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -588,5 +598,360 @@ footer {
   .maze-settings {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* =====================================================
+   Code Lab specific styles
+   ===================================================== */
+
+.codelab-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Toolbar above code editor */
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.editor-toolbar label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.editor-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  outline: none;
+  font-family: inherit;
+}
+
+.editor-select:focus {
+  border-color: var(--color-primary);
+}
+
+/* Code editor container with line numbers */
+.editor-wrapper {
+  display: flex;
+  border: 1px solid #334155;
+  border-radius: var(--radius);
+  background: #0f172a;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  font-family: "Consolas", "Fira Code", "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.line-numbers {
+  padding: 14px 10px;
+  background: #1e293b;
+  color: #64748b;
+  user-select: none;
+  text-align: right;
+  min-width: 44px;
+  border-right: 1px solid #334155;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.code-textarea {
+  flex: 1;
+  padding: 14px 14px;
+  background: #0f172a;
+  color: #f8fafc;
+  border: none;
+  outline: none;
+  resize: vertical;
+  min-height: 340px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow-x: auto;
+  tab-size: 4;
+}
+
+.editor-footer-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin-bottom: 16px;
+}
+
+/* Stdin & Console section */
+.codelab-subpanel {
+  margin-top: 14px;
+}
+
+.subpanel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.subpanel-header h4 {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.stdin-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 0.85rem;
+  min-height: 60px;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.stdin-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.console-terminal {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  font-family: "Consolas", "Fira Code", "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  min-height: 120px;
+  max-height: 240px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.console-terminal .console-info {
+  color: #38bdf8;
+}
+
+.console-terminal .console-warn {
+  color: #f59e0b;
+}
+
+.console-terminal .console-error {
+  color: #f87171;
+}
+
+.console-terminal .console-muted {
+  color: #64748b;
+}
+
+/* Visualizer reservation container */
+.trace-reservation-box {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: 24px 18px;
+  text-align: center;
+  background: #f8fafc;
+  margin-bottom: 16px;
+}
+
+.trace-reservation-box .trace-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.trace-reservation-box h4 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+  color: var(--color-text);
+}
+
+.trace-reservation-box p {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Variable state placeholder table */
+.state-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+.state-table th,
+.state-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.state-table th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.state-empty-cell {
+  text-align: center !important;
+  color: var(--color-text-light);
+  font-style: italic;
+  padding: 16px 10px !important;
+}
+
+/* Playback bar in Code Lab */
+.codelab-playback {
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.codelab-playback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.codelab-playback-header span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.step-counter-badge {
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge-info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-soon {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Practice Arena Submission Status Area */
+.submission-status-box {
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.submission-status-placeholder {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.submission-status-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.submission-status-info strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.submission-status-info p {
+  color: var(--color-text-light);
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.submission-status-box.status-pending {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.submission-status-box.status-pending strong {
+  color: #92400e;
+}
+
+.submission-status-box.status-pending p {
+  color: #78350f;
+}
+
+.architecture-notice {
+  background: #eff6ff;
+  border-left: 4px solid var(--color-primary);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  margin-top: 16px;
+}
+
+.architecture-notice strong {
+  color: var(--color-primary-dark);
+}
+
+/* Responsive adjustment for Code Lab */
+@media (max-width: 960px) {
+  .codelab-layout {
+    grid-template-columns: 1fr;
   }
 }
