@@ -84,3 +84,6 @@ out/
 .env.production.local
 # Private development documentation
 /docs/
+# Hide these files from Git
+.gitattributes
+.env.example
