@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queue Visualizer - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">ALGO<span>LAB</span></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="codelab.html">Code Lab</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="visualizer.html">Visualizer</a></li>
+        <li><a href="stack.html">Stack Lab</a></li>
+        <li><a href="queue.html" class="active">Queue Lab</a></li>
+        <li><a href="maze.html">Maze Lab</a></li>
+        <li><a href="index.html#about">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 40px 0 10px;">
+    <div class="container">
+      <h1 id="queue-title">Queue <span class="highlight">Visualizer</span></h1>
+      <p id="queue-desc">Explore First-In, First-Out (FIFO) queue operations with horizontal pipeline visualization, Front and Rear pointer tracking, and underflow safety.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN QUEUE LAYOUT ===================== -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="visualizer-layout">
+
+        <!-- LEFT: Queue visual track + interactive controls -->
+        <div class="panel">
+
+          <!-- Queue Action Controls -->
+          <div class="controls" style="margin-bottom: 16px;">
+            <label for="queue-input">Element:</label>
+            <input type="number" id="queue-input" class="stack-input" value="42" placeholder="Value" aria-label="Queue item value" />
+
+            <button class="btn btn-enqueue" id="enqueue-btn" title="Enqueue element at rear of queue">Enqueue</button>
+            <button class="btn btn-dequeue" id="dequeue-btn" title="Dequeue front element from queue">Dequeue</button>
+            <button class="btn btn-peek" id="peek-btn" title="Peek front element without removing">Peek</button>
+            <button class="btn btn-secondary" id="reset-queue-btn" title="Clear all elements from queue">Clear</button>
+
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+              <label for="scenario-select">Scenarios:</label>
+              <select id="scenario-select" class="editor-select" aria-label="Pre-built Scenarios"
+                style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 0.85rem;">
+                <option value="custom">Custom Interactive</option>
+                <option value="basic">Basic FIFO Demo (10, 20, 30)</option>
+                <option value="underflow">Underflow Test</option>
+                <option value="single">Single Element (Front == Rear)</option>
+                <option value="fifo-ordering">FIFO Multi-Step Demo</option>
+                <option value="negatives">Negative Numbers Demo</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Horizontal Queue Display Pipeline (FIFO Track) -->
+          <div class="queue-visual-wrapper">
+            <div class="queue-flow-labels">
+              <span class="flow-left">&larr; FRONT (Exit / Dequeue)</span>
+              <span class="flow-right">REAR (Entry / Enqueue) &larr;</span>
+            </div>
+            <div id="queue-container" aria-label="Horizontal Queue Display"></div>
+          </div>
+
+          <!-- Step message box -->
+          <div id="step-message" class="step-message-box">Queue initialized. The queue is currently empty.</div>
+
+          <!-- Step-by-Step History Playback controls -->
+          <div class="controls">
+            <button class="btn btn-primary" id="play-btn">Play</button>
+            <button class="btn btn-secondary" id="pause-btn" disabled>Pause</button>
+            <button class="btn btn-secondary" id="prev-btn" disabled>Prev Step</button>
+            <button class="btn btn-secondary" id="next-btn" disabled>Next Step</button>
+            <button class="btn btn-secondary" id="reset-timeline-btn">Reset</button>
+
+            <div class="speed-group">
+              <label for="speed-range">Speed</label>
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
+              <input type="range" id="speed-range" min="100" max="1500" value="800" step="100" />
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Execution Info, Educational Explanations, Complexity -->
+        <div class="panel">
+          <h3>Queue State Inspector</h3>
+          <ul class="info-list">
+            <li><span>Timeline Step</span> <span id="current-step-value" style="font-weight: 600;">0 / 0</span></li>
+            <li><span>Queue Size</span> <span id="queue-size-value" style="font-weight: 600;">0</span></li>
+            <li><span>Front Index</span> <span id="front-index-value" style="font-weight: 600;">-1 (empty)</span></li>
+            <li><span>Rear Index</span> <span id="rear-index-value" style="font-weight: 600;">-1 (empty)</span></li>
+            <li><span>Front Element</span> <span id="front-element-value" style="font-family: monospace; font-weight: 700;">None</span></li>
+            <li><span>Rear Element</span> <span id="rear-element-value" style="font-family: monospace; font-weight: 700;">None</span></li>
+            <li><span>Status</span> <span id="queue-status-value"><span class="status-badge badge-empty">Empty</span></span></li>
+          </ul>
+
+          <div style="margin-top: 20px;">
+            <div class="explanation-card" style="border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 0.95rem; color: var(--color-primary-dark); margin: 0;">Step Explanation</h4>
+                <span id="explanation-op" class="badge" style="background: #eef2ff; color: var(--color-primary); font-size: 0.75rem; padding: 2px 6px;">INITIAL</span>
+              </div>
+              <p id="explanation-what" style="font-size: 0.88rem; color: var(--color-text); margin-bottom: 8px; font-weight: 500;">Created an empty Queue structure.</p>
+              <p id="explanation-why" style="font-size: 0.82rem; color: var(--color-text-light); line-height: 1.45; margin-bottom: 8px;">In a queue, elements are inserted at the REAR and removed from the FRONT (FIFO: First In, First Out).</p>
+              <div id="explanation-summary" style="font-size: 0.78rem; font-family: monospace; color: #475569; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">Size: 0 | Front: -1 | Rear: -1</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px;">Complexity Reference</h4>
+            <table class="complexity-table">
+              <tbody>
+                <tr><td>Enqueue</td><td>O(1) &mdash; adds element at rear</td></tr>
+                <tr><td>Dequeue</td><td>O(1) &mdash; removes element from front</td></tr>
+                <tr><td>Peek / Front</td><td>O(1) &mdash; inspects front without removal</td></tr>
+                <tr><td>IsEmpty / Size</td><td>O(1) &mdash; checks empty status / count</td></tr>
+                <tr><th colspan="2">Auxiliary Space Complexity</th></tr>
+                <tr><td colspan="2">O(1) &mdash; per operation; O(n) total storage</td></tr>
+                <tr><th colspan="2">Core Operating Invariant</th></tr>
+                <tr><td colspan="2">FIFO &mdash; First In, First Out</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Educational Data Structures &amp; Algorithms Platform.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/queue.js"></script>
+</body>
+
+</html>

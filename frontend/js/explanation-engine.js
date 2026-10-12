@@ -284,6 +284,68 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
     };
   }
 
+  // Stack element read: int peeked = stack[top]; or int popped = stack[top]; or int val = stack[top];
+  const stackReadMatch = rawLine.match(/^(?:int\s+)?([a-zA-Z_]\w*)\s*=\s*(?:stack|data)\s*\[\s*(?:top|top--)\s*\]\s*;/i);
+  if (stackReadMatch) {
+    const [, targetVar] = stackReadMatch;
+    const topVal = variables['top']?.value;
+    const stackArr = arrays['stack']?.values || arrays['data']?.values;
+    const topElement = (stackArr && topVal !== undefined && topVal >= 0 && topVal < stackArr.length) ? stackArr[topVal] : null;
+    const isPeek = targetVar.toLowerCase().includes('peek');
+    const chips = [];
+    if (topVal !== undefined) chips.push({ label: 'top', value: String(topVal) });
+    if (topElement !== null) chips.push({ label: targetVar, value: String(topElement), highlight: true });
+
+    if (isPeek) {
+      return {
+        category: 'Stack Peek (Inspect Top)',
+        what: `Reading element at top index ${topVal !== undefined ? topVal : 'top'} (${topElement !== null ? topElement : 'element'}) into '${targetVar}' without modifying stack.`,
+        why: 'PEEK inspects the most recently added item without altering the top pointer or stack contents.',
+        stateChips: chips,
+        tip: 'Peek operation has O(1) time complexity and produces zero side effects on the stack.',
+      };
+    } else {
+      return {
+        category: 'Stack Pop (Retrieve Top)',
+        what: `Retrieving top element ${topElement !== null ? topElement : 'item'} from index ${topVal !== undefined ? topVal : 'top'} into '${targetVar}'.`,
+        why: 'POP accesses the most recently added item before retreating the top pointer in LIFO order.',
+        stateChips: chips,
+        tip: 'In a stack, removing an element is always performed from the top.',
+      };
+    }
+  }
+
+  // Queue element read: int peeked = queue[front]; or int dequeued = queue[front]; or int val = queue[front];
+  const queueReadMatch = rawLine.match(/^(?:int\s+)?([a-zA-Z_]\w*)\s*=\s*(?:queue|q)\s*\[\s*(?:front|front\+\+)\s*\]\s*;/i);
+  if (queueReadMatch) {
+    const [, targetVar] = queueReadMatch;
+    const frontVal = variables['front']?.value ?? 0;
+    const queueArr = arrays['queue']?.values || arrays['q']?.values;
+    const frontElement = (queueArr && frontVal !== undefined && frontVal >= 0 && frontVal < queueArr.length) ? queueArr[frontVal] : null;
+    const isPeek = targetVar.toLowerCase().includes('peek');
+    const chips = [];
+    if (frontVal !== undefined) chips.push({ label: 'front', value: String(frontVal) });
+    if (frontElement !== null) chips.push({ label: targetVar, value: String(frontElement), highlight: true });
+
+    if (isPeek) {
+      return {
+        category: 'Queue Peek (Inspect Front)',
+        what: `Reading element at front index ${frontVal !== undefined ? frontVal : 'front'} (${frontElement !== null ? frontElement : 'element'}) into '${targetVar}' without modifying queue.`,
+        why: 'PEEK inspects the oldest added element at the front of the queue without removing it or advancing the front pointer under FIFO rules.',
+        stateChips: chips,
+        tip: 'Peek operation has O(1) time complexity and allows inspecting the next element in line with zero side effects.',
+      };
+    } else {
+      return {
+        category: 'Queue Dequeue (Retrieve Front)',
+        what: `Retrieving front element ${frontElement !== null ? frontElement : 'item'} from index ${frontVal !== undefined ? frontVal : 'front'} into '${targetVar}'.`,
+        why: 'DEQUEUE accesses the oldest added element (First-In, First-Out) before advancing the front pointer to remove it from the active queue.',
+        stateChips: chips,
+        tip: 'In a queue, removal is strictly performed from the FRONT in FIFO order.',
+      };
+    }
+  }
+
   // 5. Swap Step 1: int temp = arr[j]; or temp = arr[minIdx];
   const swapStep1Match = rawLine.match(/^(?:int\s+)?([a-zA-Z_]\w*)\s*=\s*([a-zA-Z_]\w*)\s*\[\s*([^\]]+)\s*\]\s*;/);
   if (swapStep1Match) {
@@ -398,6 +460,40 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
       why: 'Reserves a contiguous memory block with default initialized values.',
       stateChips: [{ label: 'Array', value: arrName }, { label: 'Size', value: lenExpr }],
       tip: 'Numeric arrays in Java are automatically default-initialized to 0.',
+    };
+  }
+
+  // Stack Push element write: stack[top] = val; or data[top] = val;
+  const stackPushMatch = rawLine.match(/^(?:stack|data)\s*\[\s*(?:top|\+\+top)\s*\]\s*=\s*(.+?);/i);
+  if (stackPushMatch) {
+    const [, valExpr] = stackPushMatch;
+    const topVal = variables['top']?.value;
+    const chips = [];
+    if (topVal !== undefined) chips.push({ label: 'top', value: String(topVal) });
+    chips.push({ label: 'Value', value: valExpr.trim(), highlight: true });
+    return {
+      category: 'Stack Push (Element Assignment)',
+      what: `Writing value ${valExpr.trim()} into stack at top index ${topVal !== undefined ? topVal : 'top'}.`,
+      why: 'Stores the newly pushed item at the top of the stack under LIFO rules.',
+      stateChips: chips,
+      tip: 'Every pushed element resides at the current top index, becoming the first item that will be popped.',
+    };
+  }
+
+  // Queue Enqueue element write: queue[rear] = val; or q[rear] = val;
+  const queueEnqueueMatch = rawLine.match(/^(?:queue|q)\s*\[\s*(?:rear|\+\+rear)\s*\]\s*=\s*(.+?);/i);
+  if (queueEnqueueMatch) {
+    const [, valExpr] = queueEnqueueMatch;
+    const rearVal = variables['rear']?.value;
+    const chips = [];
+    if (rearVal !== undefined) chips.push({ label: 'rear', value: String(rearVal) });
+    chips.push({ label: 'Value', value: valExpr.trim(), highlight: true });
+    return {
+      category: 'Queue Enqueue (Element Placement)',
+      what: `Writing value ${valExpr.trim()} into the rear of the queue at index ${rearVal !== undefined ? rearVal : 'rear'}.`,
+      why: 'Inserts the newly enqueued item at the rear of the queue under FIFO rules.',
+      stateChips: chips,
+      tip: 'Every enqueued item joins at the rear of the line and waits until all preceding elements have been dequeued.',
     };
   }
 
@@ -551,6 +647,40 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
     };
   }
 
+  // Stack Draining Loop: while (top >= 0)
+  const stackWhileLoopMatch = rawLine.match(/^while\s*\(\s*top\s*>=\s*0\s*\)/i);
+  if (stackWhileLoopMatch) {
+    const curTop = variables['top']?.value;
+    const hasElements = curTop !== undefined ? curTop >= 0 : null;
+    const chips = [];
+    if (curTop !== undefined) chips.push({ label: 'top', value: String(curTop) });
+    if (hasElements !== null) chips.push({ label: 'Condition', value: hasElements ? 'TRUE (Non-Empty)' : 'FALSE (Empty)', highlight: true });
+    return {
+      category: 'Stack Draining Loop',
+      what: `Evaluating: while (top >= 0). Current top = ${curTop !== undefined ? curTop : 'top'}.`,
+      why: 'Loops to process or drain remaining elements as long as the stack is not empty (top >= 0).',
+      stateChips: chips,
+      tip: 'When top reaches -1, the stack is completely empty and the loop terminates.',
+    };
+  }
+
+  // Queue Draining Loop: while (size > 0)
+  const queueWhileLoopMatch = rawLine.match(/^while\s*\(\s*size\s*>\s*0\s*\)/i);
+  if (queueWhileLoopMatch) {
+    const curSize = variables['size']?.value;
+    const hasElements = curSize !== undefined ? curSize > 0 : null;
+    const chips = [];
+    if (curSize !== undefined) chips.push({ label: 'size', value: String(curSize) });
+    if (hasElements !== null) chips.push({ label: 'Condition', value: hasElements ? 'TRUE (Non-Empty)' : 'FALSE (Empty)', highlight: true });
+    return {
+      category: 'Queue Draining Loop',
+      what: `Evaluating: while (size > 0). Current size = ${curSize !== undefined ? curSize : 'size'}.`,
+      why: 'Loops to process or drain remaining elements as long as the queue is not empty (size > 0).',
+      stateChips: chips,
+      tip: 'When size reaches 0, the queue is completely drained and the loop terminates.',
+    };
+  }
+
   // 11. While loop header: while (cond)
   const whileLoopMatch = rawLine.match(/^while\s*\(\s*(.+)\s*\)/);
   if (whileLoopMatch) {
@@ -561,6 +691,44 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
       why: 'If the condition evaluates to true, the loop body executes; otherwise, the loop terminates.',
       stateChips: buildVariableChips(variables),
       tip: 'Make sure loop variables are updated inside the body so the loop eventually terminates.',
+    };
+  }
+
+  // Stack Empty Check: if (top == -1)
+  const stackEmptyCheckMatch = rawLine.match(/^if\s*\(\s*top\s*==\s*-1\s*\)/i);
+  if (stackEmptyCheckMatch) {
+    const curTop = variables['top']?.value;
+    const isEmpty = curTop !== undefined ? curTop === -1 : null;
+    const chips = [];
+    if (curTop !== undefined) chips.push({ label: 'top', value: String(curTop) });
+    if (isEmpty !== null) chips.push({ label: 'Is Empty', value: isEmpty ? 'TRUE (Underflow)' : 'FALSE', highlight: true });
+    return {
+      category: 'Empty Stack Check (Underflow Protection)',
+      what: `Checking if stack is empty: top (${curTop !== undefined ? curTop : 'top'}) == -1 → ${isEmpty !== null ? (isEmpty ? 'TRUE' : 'FALSE') : 'Evaluating'}.`,
+      why: 'Prevents Underflow errors by checking if elements exist before attempting to pop or peek.',
+      stateChips: chips,
+      tip: 'Popping or peeking an empty stack causes an underflow error; always check if empty first.',
+    };
+  }
+
+  // Queue Empty Check: if (size == 0) or if (front > rear)
+  const queueEmptyCheckMatch = rawLine.match(/^if\s*\(\s*(size\s*==\s*0|front\s*>\s*rear)\s*\)/i);
+  if (queueEmptyCheckMatch) {
+    const sizeVal = variables['size']?.value;
+    const frontVal = variables['front']?.value;
+    const rearVal = variables['rear']?.value;
+    const isEmpty = sizeVal !== undefined ? sizeVal === 0 : (frontVal !== undefined && rearVal !== undefined ? frontVal > rearVal : true);
+    return {
+      category: 'Empty Queue Check (Underflow Protection)',
+      what: `Evaluating empty queue condition: ${rawLine.slice(3, -1).trim()} → ${isEmpty ? 'TRUE (Queue is empty)' : 'FALSE (Queue has elements)'}.`,
+      why: 'Prevents queue underflow by checking whether elements exist before attempting a dequeue or peek.',
+      stateChips: [
+        ...(sizeVal !== undefined ? [{ label: 'size', value: String(sizeVal) }] : []),
+        ...(frontVal !== undefined ? [{ label: 'front', value: String(frontVal) }] : []),
+        ...(rearVal !== undefined ? [{ label: 'rear', value: String(rearVal) }] : []),
+        { label: 'Result', value: isEmpty ? 'EMPTY' : 'NOT EMPTY', highlight: true }
+      ],
+      tip: 'Attempting to dequeue from an empty queue triggers underflow, so checking size == 0 guards against runtime errors.',
     };
   }
 
@@ -704,6 +872,41 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
     };
   }
 
+  // Stack Pointer Initialization: int top = -1;
+  const stackPointerInitMatch = rawLine.match(/^(?:int\s+)?top\s*=\s*(-1)\s*;/i);
+  if (stackPointerInitMatch) {
+    return {
+      category: 'Stack Initialization (Top Pointer)',
+      what: 'Initializing stack pointer top = -1 to represent an empty stack.',
+      why: 'In a 0-indexed array stack, top = -1 indicates that zero elements currently exist.',
+      stateChips: [{ label: 'top', value: '-1', highlight: true }],
+      tip: 'An empty stack is conventionally tracked with top pointer set to -1.',
+    };
+  }
+
+  // Queue Pointer Initialization: int front = 0; int rear = -1;
+  if (rawLine.includes('front') || rawLine.includes('rear')) {
+    const hasFront = /(?:int\s+)?front\s*=\s*0/i.test(rawLine);
+    const hasRear = /(?:int\s+)?rear\s*=\s*-1/i.test(rawLine);
+    if (hasFront || hasRear) {
+      const isBoth = hasFront && hasRear;
+      return {
+        category: isBoth ? 'Queue Initialization' : (hasFront ? 'Queue Initialization (Front Pointer)' : 'Queue Initialization (Rear Pointer)'),
+        what: isBoth
+          ? 'Initializing front pointer (0) and rear pointer (-1) to establish empty queue state.'
+          : (hasFront
+            ? 'Initializing front pointer front = 0 to establish the start index of the queue.'
+            : 'Initializing rear pointer rear = -1 to represent an empty queue with zero elements.'),
+        why: 'In an array-backed queue, front points to the head element while rear tracks the tail (rear = -1 indicates empty under FIFO rules).',
+        stateChips: [
+          ...(hasFront ? [{ label: 'front', value: '0', highlight: true }] : []),
+          ...(hasRear ? [{ label: 'rear', value: '-1', highlight: true }] : []),
+        ],
+        tip: 'When rear < front (e.g. front = 0, rear = -1), the queue has size 0 and is completely empty.',
+      };
+    }
+  }
+
   // 14. Variable declaration with initialization: int n = arr.length;
   const varDeclMatch = rawLine.match(/^(?:int|double|float|long|boolean|char|String)\s+([a-zA-Z_]\w*)\s*=\s*(.+?);/);
   if (varDeclMatch) {
@@ -715,6 +918,62 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
       why: 'Reserves local storage for tracking numbers or intermediate results.',
       stateChips: chips,
       tip: 'Local variables are scoped to the block where they are declared.',
+    };
+  }
+
+  // Stack Pointer Increment: top++;
+  const stackPointerIncMatch = rawLine.match(/^top\s*(\+\+|\+=\s*1|\s*=\s*top\s*\+\s*1)\s*;/i);
+  if (stackPointerIncMatch) {
+    const curTop = variables['top']?.value;
+    const nextTop = curTop !== undefined ? curTop + 1 : 'top + 1';
+    return {
+      category: 'Stack Pointer Increment',
+      what: `Advancing top pointer from ${curTop !== undefined ? curTop : 'current'} to ${nextTop}.`,
+      why: 'Prepares an empty slot at the new top index to receive the next pushed element.',
+      stateChips: [{ label: 'top', value: `${curTop ?? ''} → ${nextTop}`, highlight: true }],
+      tip: 'Pushing an element increases the stack size and advances the top pointer by 1.',
+    };
+  }
+
+  // Stack Pointer Decrement: top--;
+  const stackPointerDecMatch = rawLine.match(/^top\s*(--|-=\s*1|\s*=\s*top\s*-\s*1)\s*;/i);
+  if (stackPointerDecMatch) {
+    const curTop = variables['top']?.value;
+    const nextTop = curTop !== undefined ? curTop - 1 : 'top - 1';
+    return {
+      category: 'Stack Pointer Decrement',
+      what: `Decrementing top pointer from ${curTop !== undefined ? curTop : 'current'} to ${nextTop}.`,
+      why: 'Retreats the top pointer to the preceding element after popping, reducing stack size by 1.',
+      stateChips: [{ label: 'top', value: `${curTop ?? ''} → ${nextTop}`, highlight: true }],
+      tip: 'Popping an element decreases the stack size and moves the top pointer down by 1.',
+    };
+  }
+
+  // Queue Rear Pointer Increment: rear++;
+  const queueRearIncMatch = rawLine.match(/^rear\s*(\+\+|\+=\s*1|\s*=\s*rear\s*\+\s*1)\s*;/i);
+  if (queueRearIncMatch) {
+    const curRear = variables['rear']?.value;
+    const nextRear = curRear !== undefined ? curRear + 1 : 'rear + 1';
+    return {
+      category: 'Queue Rear Pointer Increment',
+      what: `Advancing rear pointer from ${curRear !== undefined ? curRear : 'current'} to ${nextRear}.`,
+      why: 'Prepares the next available slot at the rear of the queue to receive an incoming enqueued element.',
+      stateChips: [{ label: 'rear', value: `${curRear ?? ''} → ${nextRear}`, highlight: true }],
+      tip: 'Enqueueing advances the rear pointer by 1 as the queue expands.',
+    };
+  }
+
+  // Queue Front Pointer Increment: front++;
+  const queueFrontIncMatch = rawLine.match(/^front\s*(\+\+|\+=\s*1|\s*=\s*front\s*\+\s*1)\s*;/i);
+  if (queueFrontIncMatch) {
+    const curFront = variables['front']?.value;
+    const nextFront = curFront !== undefined ? curFront + 1 : 'front + 1';
+    return {
+      category: 'Queue Front Pointer Increment',
+      what: `Advancing front pointer from ${curFront !== undefined ? curFront : 'current'} to ${nextFront}.`,
+      why: 'Moves the front of the queue forward by 1, effectively removing the served element under FIFO rules.',
+      stateChips: [{ label: 'front', value: `${curFront ?? ''} → ${nextFront}`, highlight: true }],
+      tip: 'Dequeuing advances the front pointer to the next element waiting in line.',
     };
   }
 

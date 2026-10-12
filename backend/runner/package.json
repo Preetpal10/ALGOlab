@@ -15,6 +15,9 @@
     "test:insertion": "node --test tests/insertion-sort.test.js",
     "test:linear": "node --test tests/linear-search.test.js",
     "test:binary": "node --test tests/binary-search.test.js",
+    "test:stack": "node --test tests/stack.test.js",
+    "test:queue": "node --test tests/queue.test.js",
+    "test:bugfix": "node --test tests/routing-and-playback.test.js",
     "start": "node server.js"
   },
   "private": true

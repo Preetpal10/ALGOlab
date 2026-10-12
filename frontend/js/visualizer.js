@@ -1061,25 +1061,45 @@ if (typeof document !== "undefined") {
       });
     }
 
-    // Check URL parameters (e.g. visualizer.html?algo=binary-search)
+    // ---------------------------------------------------------------
+    // Read URL parameters — must happen BEFORE the initial render so
+    // the correct algorithm is active from the first frame.
+    // e.g. visualizer.html?algo=linear-search&target=25
+    // ---------------------------------------------------------------
+    let urlAlgoApplied = false;
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const algoParam = urlParams.get("algo");
-      if (algoParam && (algoParam === "selection-sort" || algoParam === "insertion-sort" || algoParam === "bubble-sort" || algoParam === "linear-search" || algoParam === "binary-search")) {
+      const algoParam = urlParams.get('algo');
+      const validAlgos = ['bubble-sort', 'selection-sort', 'insertion-sort', 'linear-search', 'binary-search'];
+
+      if (algoParam && validAlgos.includes(algoParam)) {
+        // Apply target value first so generateStepsForCurrentAlgorithm picks it up
+        const targetParam = urlParams.get('target');
+        if (targetParam && targetInput) {
+          targetInput.value = targetParam;
+        }
+
+        // Update the select BEFORE calling handleAlgorithmChange
         if (algorithmSelect) {
           algorithmSelect.value = algoParam;
         }
+
+        // handleAlgorithmChange calls updateAlgorithmInfo + generateSteps + renderStep
+        handleAlgorithmChange();
+        urlAlgoApplied = true;
+      } else if (algoParam) {
+        // Unknown algo param — log a warning and fall through to default
+        console.warn('[ALGOLAB] Unknown algo param:', algoParam, '— defaulting to Bubble Sort.');
       }
-      const targetParam = urlParams.get("target");
-      if (targetParam && targetInput) {
-        targetInput.value = targetParam;
-      }
-    } catch (_) {
-      // URLSearchParams fallback
+    } catch (e) {
+      console.warn('[ALGOLAB] URLSearchParams error:', e);
     }
 
-    updateAlgorithmInfo();
-    handleGenerateArray();
+    // If no valid URL param was found, run the default initialization
+    if (!urlAlgoApplied) {
+      updateAlgorithmInfo();
+      handleGenerateArray();
+    }
   });
 }
 

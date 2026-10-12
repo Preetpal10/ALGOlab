@@ -201,6 +201,114 @@ public class Solution {
         }
     }
 }`,
+    "stack": `// ALGOLAB - Stack Data Structure (LIFO) in Java
+public class Solution {
+    public static void main(String[] args) {
+        // Simple array-backed stack with dynamic LIFO operations
+        int capacity = 5;
+        int[] stack = new int[capacity];
+        int top = -1;
+
+        // 1. Check empty stack / underflow handling
+        if (top == -1) {
+            System.out.println("Underflow: Stack is empty");
+        }
+
+        // 2. Push elements onto stack
+        top++;
+        stack[top] = 10;
+        System.out.println("PUSH: " + stack[top] + " (top=" + top + ")");
+
+        top++;
+        stack[top] = 20;
+        System.out.println("PUSH: " + stack[top] + " (top=" + top + ")");
+
+        top++;
+        stack[top] = 30;
+        System.out.println("PUSH: " + stack[top] + " (top=" + top + ")");
+
+        // 3. Peek top element without removing
+        int peeked = stack[top];
+        System.out.println("PEEK: " + peeked + " (top=" + top + ")");
+
+        // 4. Pop elements from stack
+        int popped1 = stack[top];
+        top--;
+        System.out.println("POP: " + popped1 + " (top=" + top + ")");
+
+        // 5. Push another element
+        top++;
+        stack[top] = 42;
+        System.out.println("PUSH: " + stack[top] + " (top=" + top + ")");
+
+        // 6. Pop remaining elements until empty
+        while (top >= 0) {
+            int val = stack[top];
+            top--;
+            System.out.println("POP: " + val + " (top=" + top + ")");
+        }
+
+        System.out.println("Stack operations completed successfully.");
+    }
+}`,
+    "queue": `// ALGOLAB - Queue Data Structure (FIFO) in Java
+public class Solution {
+    public static void main(String[] args) {
+        // Simple array-backed queue with dynamic FIFO operations
+        int capacity = 5;
+        int[] queue = new int[capacity];
+        int front = 0;
+        int rear = -1;
+        int size = 0;
+
+        // 1. Check empty queue / underflow handling
+        if (size == 0) {
+            System.out.println("Underflow: Queue is empty");
+        }
+
+        // 2. Enqueue elements at rear
+        rear++;
+        queue[rear] = 10;
+        size++;
+        System.out.println("ENQUEUE: " + queue[rear] + " (front=" + front + ", rear=" + rear + ", size=" + size + ")");
+
+        rear++;
+        queue[rear] = 20;
+        size++;
+        System.out.println("ENQUEUE: " + queue[rear] + " (front=" + front + ", rear=" + rear + ", size=" + size + ")");
+
+        rear++;
+        queue[rear] = 30;
+        size++;
+        System.out.println("ENQUEUE: " + queue[rear] + " (front=" + front + ", rear=" + rear + ", size=" + size + ")");
+
+        // 3. Peek front element without removing
+        int peeked = queue[front];
+        System.out.println("PEEK: " + peeked + " (front=" + front + ")");
+
+        // 4. Dequeue elements from front (FIFO order)
+        int dequeued1 = queue[front];
+        front++;
+        size--;
+        System.out.println("DEQUEUE: " + dequeued1 + " (front=" + front + ", size=" + size + ")");
+
+        // 5. Enqueue another element at rear
+        rear++;
+        queue[rear] = 42;
+        size++;
+        System.out.println("ENQUEUE: " + queue[rear] + " (rear=" + rear + ", size=" + size + ")");
+
+        // 6. Dequeue remaining elements until empty
+        while (size > 0) {
+            int val = queue[front];
+            front++;
+            size--;
+            System.out.println("DEQUEUE: " + val + " (size=" + size + ")");
+        }
+
+        System.out.println("Queue operations completed successfully.");
+    }
+}`,
     "reverse-array": `// ALGOLAB - Reverse Array in Java
 public class Solution {
     public static void main(String[] args) {
