@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Code Lab - ALGOLAB</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
   <!-- ===================== NAVBAR ===================== -->
@@ -52,7 +54,10 @@
               <label for="template-select" style="margin-left: 8px;">Template:</label>
               <select id="template-select" class="editor-select" aria-label="Code Template">
                 <option value="bubble-sort">Bubble Sort (Array)</option>
+                <option value="selection-sort">Selection Sort (Array)</option>
+                <option value="insertion-sort">Insertion Sort (Array)</option>
                 <option value="linear-search">Linear Search</option>
+                <option value="binary-search">Binary Search</option>
                 <option value="reverse-array">Reverse Array</option>
                 <option value="empty">Empty Starter</option>
               </select>
@@ -60,23 +65,18 @@
 
             <div class="toolbar-group">
               <button class="btn btn-primary" id="run-btn" title="Run Java code">Run Code</button>
-              <button class="btn btn-success" id="submit-btn" title="Submit solution to Practice Arena judging">Submit Solution</button>
-              <button class="btn btn-secondary" id="reset-code-btn" title="Reset code to current template">Reset Code</button>
+              <button class="btn btn-success" id="submit-btn" title="Submit solution to Practice Arena judging">Submit
+                Solution</button>
+              <button class="btn btn-secondary" id="reset-code-btn" title="Reset code to current template">Reset
+                Code</button>
             </div>
           </div>
 
           <!-- Code Editor Area -->
           <div class="editor-wrapper">
             <div class="line-numbers" id="line-numbers" aria-hidden="true">1</div>
-            <textarea
-              id="code-editor"
-              class="code-textarea"
-              spellcheck="false"
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="off"
-              aria-label="Java Code Editor"
-            ></textarea>
+            <textarea id="code-editor" class="code-textarea" spellcheck="false" autocomplete="off" autocorrect="off"
+              autocapitalize="off" aria-label="Java Code Editor"></textarea>
           </div>
 
           <!-- Editor Status Bar -->
@@ -91,19 +91,17 @@
               <h4>Standard Input (stdin)</h4>
               <span style="font-size: 0.75rem; color: var(--color-text-light);">Optional input passed to program</span>
             </div>
-            <textarea
-              id="stdin-input"
-              class="stdin-textarea"
+            <textarea id="stdin-input" class="stdin-textarea"
               placeholder="Enter standard input here if your Java program reads from System.in..."
-              aria-label="Standard Input"
-            ></textarea>
+              aria-label="Standard Input"></textarea>
           </div>
 
           <!-- Console / Output Panel -->
           <div class="codelab-subpanel">
             <div class="subpanel-header">
               <h4>Console Output</h4>
-              <button class="btn btn-secondary" id="clear-console-btn" style="padding: 4px 10px; font-size: 0.8rem;">Clear Console</button>
+              <button class="btn btn-secondary" id="clear-console-btn"
+                style="padding: 4px 10px; font-size: 0.8rem;">Clear Console</button>
             </div>
             <div id="console-output" class="console-terminal" aria-live="polite" aria-label="Console Output"></div>
           </div>
@@ -114,13 +112,15 @@
               <h4>Practice Arena Submission Status</h4>
               <span class="badge badge-pending" id="submission-badge">Judging Engine Reserved</span>
             </div>
-            <div id="submission-status-box" class="submission-status-box" aria-live="polite" aria-label="Submission and Judging Status">
+            <div id="submission-status-box" class="submission-status-box" aria-live="polite"
+              aria-label="Submission and Judging Status">
               <div class="submission-status-placeholder">
                 <span class="submission-status-icon">📋</span>
                 <div class="submission-status-info">
                   <strong id="submission-status-title">No Submission Recorded</strong>
                   <p id="submission-status-desc">
-                    Click <strong>Submit Solution</strong> to evaluate your code against the Practice Arena test suite when judging is connected.
+                    Click <strong>Submit Solution</strong> to evaluate your code against the Practice Arena test suite
+                    when judging is connected.
                   </p>
                 </div>
               </div>
@@ -135,27 +135,102 @@
           <div class="codelab-playback">
             <div class="codelab-playback-header">
               <span>Execution Trace Controls</span>
-              <span class="badge badge-pending" title="Tracing service scheduled for Phase 2/3">Awaiting Trace Service</span>
+              <span class="badge badge-info" id="trace-mode-badge">Pre-recorded JDI Test Fixture</span>
+            </div>
+
+            <!-- Demo Fixture Toolbar (Phase 2 Playback Milestone) -->
+            <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <label for="fixture-select"
+                style="font-size: 0.85rem; font-weight: 600; color: var(--color-text-light);">Demo Fixture:</label>
+              <select id="fixture-select" class="editor-select" aria-label="Demo Trace Fixture">
+                <option value="bubble-sort" selected>Bubble Sort (Genuine JDI Trace - 72 steps)</option>
+                <option value="single-step">Single Step (1 step)</option>
+                <option value="truncated">Truncated Trace (5 steps limit)</option>
+                <option value="timeout-error">Timeout Error Trace</option>
+                <option value="compilation-error">Compilation Error Trace</option>
+                <option value="empty">Empty Trace (0 steps)</option>
+              </select>
+              <button class="btn btn-secondary" id="load-fixture-btn" style="padding: 5px 12px; font-size: 0.8rem;"
+                title="Load pre-recorded JDI fixture into playback engine">Load Demo Trace</button>
             </div>
 
             <div class="controls" style="margin-bottom: 6px;">
-              <button class="btn btn-primary" id="play-btn" disabled title="Trace playback will be active once execution trace service is integrated">Play</button>
-              <button class="btn btn-secondary" id="pause-btn" disabled title="Trace playback will be active once execution trace service is integrated">Pause</button>
-              <button class="btn btn-secondary" id="prev-btn" disabled title="Step backwards in recorded trace">Previous</button>
-              <button class="btn btn-secondary" id="next-btn" disabled title="Step forwards in recorded trace">Next</button>
-              <button class="btn btn-secondary" id="trace-reset-btn" disabled title="Reset trace to initial state">Reset</button>
+              <button class="btn btn-primary" id="play-btn" disabled title="Play execution trace">Play</button>
+              <button class="btn btn-secondary" id="pause-btn" disabled title="Pause execution trace">Pause</button>
+              <button class="btn btn-secondary" id="prev-btn" disabled
+                title="Step backwards in recorded trace">Previous</button>
+              <button class="btn btn-secondary" id="next-btn" disabled
+                title="Step forwards in recorded trace">Next</button>
+              <button class="btn btn-secondary" id="trace-reset-btn" disabled
+                title="Reset trace to initial state">Reset</button>
 
               <div class="speed-group">
                 <label for="trace-speed-range">Speed</label>
                 <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
-                <input type="range" id="trace-speed-range" min="100" max="1500" value="800" disabled aria-label="Playback speed" />
+                <input type="range" id="trace-speed-range" min="100" max="1500" value="800" disabled
+                  aria-label="Playback speed" />
                 <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
               </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--color-text-light); margin-top: 8px;">
-              <span>Playback Status: <strong id="trace-status-label" style="color: var(--color-text);">Inactive</strong></span>
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--color-text-light); margin-top: 8px;">
+              <span>Playback Status: <strong id="trace-status-label"
+                  style="color: var(--color-text);">Inactive</strong></span>
               <span>Step: <span class="step-counter-badge" id="step-counter-label">-- / --</span></span>
+            </div>
+
+            <!-- Trace Semantics Explicit Indicator (state_before_line_execution) -->
+            <div class="trace-semantics-banner" id="trace-semantics-banner" style="display: none;">
+              <span class="banner-icon" aria-hidden="true">ℹ️</span>
+              <div class="banner-content">
+                <strong>Semantics (state_before_line_execution):</strong>
+                <span id="semantics-details">State captured BEFORE line executes. Variables and array show values prior
+                  to executing the highlighted line.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= STEP EXPLANATION PANEL (PHASE 8) ================= -->
+          <div class="step-explanation-card" id="explanation-panel">
+            <div class="explanation-header">
+              <div class="explanation-title-group">
+                <span class="explanation-badge">Step Explanation</span>
+                <span class="explanation-category" id="explanation-category">Inactive</span>
+              </div>
+              <span class="explanation-step-num" id="explanation-step-num">Step -- / --</span>
+            </div>
+
+            <div class="explanation-code-snippet">
+              <span class="code-line-badge" id="explanation-line-badge">Line --</span>
+              <code id="explanation-code-text">// Execute Java code or load demo trace to begin stepping</code>
+            </div>
+
+            <div class="explanation-body">
+              <div class="explanation-section">
+                <h5 class="explanation-section-title">What is happening?</h5>
+                <p id="explanation-what-text">Click "Run Code" to compile, trace, and inspect your Java program.</p>
+              </div>
+
+              <div class="explanation-section" id="explanation-why-section">
+                <h5 class="explanation-section-title">Why it matters:</h5>
+                <p id="explanation-why-text">Each step captures variable values and array data immediately BEFORE the highlighted line runs.</p>
+              </div>
+
+              <div class="explanation-state-summary" id="explanation-state-summary" style="display: none;">
+                <h5 class="explanation-section-title">Observed State:</h5>
+                <div class="state-chips" id="explanation-chips"></div>
+              </div>
+
+              <div class="explanation-change-banner" id="explanation-change-banner" style="display: none;">
+                <span class="change-icon">⚡</span>
+                <span id="explanation-change-text"></span>
+              </div>
+
+              <div class="explanation-tip" id="explanation-tip" style="display: none;">
+                <span class="tip-icon">💡</span>
+                <span id="explanation-tip-text"></span>
+              </div>
             </div>
           </div>
 
@@ -170,10 +245,13 @@
               <span class="trace-icon">📊</span>
               <h4>Visualization Panel Reserved</h4>
               <p>
-                This canvas is reserved for genuine runtime execution traces (e.g. live array mutations, pointer updates, and comparisons).
+                This canvas is reserved for genuine runtime execution traces (e.g. live array mutations, pointer
+                updates, and comparisons).
               </p>
-              <div style="margin-top: 12px; padding: 10px; background: #ffffff; border: 1px dashed var(--color-border); border-radius: 6px; font-size: 0.8rem; color: var(--color-text-light);">
-                <strong>ALGOLAB Principle:</strong> Only real, instrumented execution traces will be rendered here once the execution tracer is connected. No animations or steps are fabricated.
+              <div
+                style="margin-top: 12px; padding: 10px; background: #ffffff; border: 1px dashed var(--color-border); border-radius: 6px; font-size: 0.8rem; color: var(--color-text-light);">
+                <strong>ALGOLAB Principle:</strong> Only real, instrumented execution traces will be rendered here once
+                the execution tracer is connected. No animations or steps are fabricated.
               </div>
             </div>
           </div>
@@ -197,7 +275,8 @@
               <tbody id="variables-table-body">
                 <tr>
                   <td colspan="4" class="state-empty-cell">
-                    No active execution trace. Variable values and call stack frames will appear here during live debugging.
+                    No active execution trace. Variable values and call stack frames will appear here during live
+                    debugging.
                   </td>
                 </tr>
               </tbody>
@@ -208,7 +287,9 @@
           <div class="architecture-notice">
             <strong>Architecture Notice (Phase 1):</strong>
             <p style="margin-top: 4px; font-size: 0.8rem; color: var(--color-text-light);">
-              You are viewing the Phase 1 Code Lab interface prototype. The sandboxed Java compilation service (Phase 3) and trace instrumentation engine (Phase 2) are not yet connected. Controls for unintegrated services are deliberately disabled or labelled to ensure honesty.
+              You are viewing the Phase 1 Code Lab interface prototype. The sandboxed Java compilation service (Phase 3)
+              and trace instrumentation engine (Phase 2) are not yet connected. Controls for unintegrated services are
+              deliberately disabled or labelled to ensure honesty.
             </p>
           </div>
 
@@ -226,6 +307,7 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/codelab.js"></script>
+  <script type="module" src="js/codelab.js"></script>
 </body>
+
 </html>

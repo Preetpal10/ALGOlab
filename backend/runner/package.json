@@ -1,0 +1,21 @@
+{
+  "name": "algolab-runner",
+  "version": "1.0.0",
+  "description": "ALGOLAB Java Execution and JDI Tracing Service Proof of Concept",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/playback-engine.test.js tests/tracer.test.js",
+    "test:playback": "node --test tests/playback-engine.test.js",
+    "test:tracer": "node --test tests/tracer.test.js",
+    "test:docker": "node --test tests/docker-runner.test.js",
+    "test:api": "node --test tests/server.test.js",
+    "test:integration": "node --test tests/frontend-integration.test.js",
+    "test:explanation": "node --test tests/explanation-engine.test.js",
+    "test:selection": "node --test tests/selection-sort.test.js",
+    "test:insertion": "node --test tests/insertion-sort.test.js",
+    "test:linear": "node --test tests/linear-search.test.js",
+    "test:binary": "node --test tests/binary-search.test.js",
+    "start": "node server.js"
+  },
+  "private": true
+}

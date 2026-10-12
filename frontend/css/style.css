@@ -358,6 +358,46 @@ footer {
   background: var(--color-success);
 }
 
+/* Highlight color for the current minimum candidate during Selection Sort */
+.array-bar.minimum {
+  background: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+  transform: scaleY(1.03);
+}
+
+/* Highlight color for the current key element during Insertion Sort */
+.array-bar.key {
+  background: var(--color-accent);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+  transform: scaleY(1.03);
+}
+
+/* Highlight color for the found target element during Search algorithms */
+.array-bar.found {
+  background: var(--color-success);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  transform: scaleY(1.05);
+}
+
+/* Highlight color for the current midpoint element during Binary Search */
+.array-bar.mid {
+  background: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  transform: scaleY(1.05);
+}
+
+/* Boundary markers for low and high indices during Binary Search */
+.array-bar.boundary {
+  outline: 2px dashed #06b6d4;
+  outline-offset: 1px;
+}
+
+/* Dim elements outside the active Binary Search interval [low, high] */
+.array-bar.out-of-range {
+  opacity: 0.28;
+  filter: grayscale(70%);
+}
+
 /* Controls row */
 .controls {
   display: flex;
@@ -887,6 +927,16 @@ footer {
   color: #64748b;
 }
 
+.badge-success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 /* Practice Arena Submission Status Area */
 .submission-status-box {
   background: #f8fafc;
@@ -947,6 +997,279 @@ footer {
 
 .architecture-notice strong {
   color: var(--color-primary-dark);
+}
+
+/* Trace Playback & Visualization Styles (Phase 2) */
+.line-numbers .line-num {
+  padding: 0 4px;
+  line-height: 1.5;
+}
+
+.line-numbers .line-num.active-line {
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 3px;
+}
+
+.trace-semantics-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  color: #1e3a8a;
+}
+
+.trace-semantics-banner.warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.trace-semantics-banner.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.array-viz-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.array-viz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.array-viz-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+  min-height: 60px;
+  padding: 6px 0;
+}
+
+.array-cell-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  border: 2px solid var(--color-border);
+  border-radius: 6px;
+  background: #f8fafc;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.array-cell-box.highlight {
+  border-color: var(--color-primary);
+  background: #eef2ff;
+}
+
+.array-cell-val {
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-family: "Consolas", monospace;
+}
+
+.array-cell-idx {
+  width: 100%;
+  text-align: center;
+  background: #e2e8f0;
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  padding: 2px 0;
+  font-family: "Consolas", monospace;
+}
+
+/* Step Explanation Panel Styles (Phase 8) */
+.step-explanation-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step-explanation-card:hover {
+  box-shadow: var(--shadow);
+}
+
+.explanation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.explanation-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.explanation-badge {
+  background: #eef2ff;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+}
+
+.explanation-category {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.explanation-step-num {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text);
+  background: #f1f5f9;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.explanation-code-snippet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.code-line-badge {
+  background: #334155;
+  color: #94a3b8;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.explanation-code-snippet code {
+  color: #38bdf8;
+  white-space: pre;
+}
+
+.explanation-section {
+  margin-bottom: 12px;
+}
+
+.explanation-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.explanation-section p {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.explanation-state-summary {
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.state-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  font-family: "Consolas", monospace;
+  color: #334155;
+}
+
+.state-chip strong {
+  color: var(--color-primary-dark);
+}
+
+.state-chip.highlight {
+  background: #eef2ff;
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.explanation-change-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: #166534;
+  margin-bottom: 12px;
+  font-family: "Consolas", monospace;
+}
+
+.explanation-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fef9c3;
+  border: 1px solid #fde047;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #854d0e;
+  line-height: 1.45;
+}
+
+.explanation-tip .tip-icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 /* Responsive adjustment for Code Lab */

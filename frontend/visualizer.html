@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bubble Sort Visualizer - ALGOLAB</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
   <!-- ===================== NAVBAR ===================== -->
@@ -29,8 +31,8 @@
   <!-- ===================== PAGE HEADER ===================== -->
   <section class="hero" style="padding: 40px 0 10px;">
     <div class="container">
-      <h1>Bubble Sort <span class="highlight">Visualizer</span></h1>
-      <p>Generate a random array, then step through the real Bubble Sort algorithm.</p>
+      <h1 id="visualizer-title">Bubble Sort <span class="highlight">Visualizer</span></h1>
+      <p id="visualizer-desc">Generate a random array, then step through the real Bubble Sort algorithm.</p>
     </div>
   </section>
 
@@ -42,10 +44,28 @@
         <!-- LEFT: array display + controls -->
         <div class="panel">
 
-          <!-- Array size input + generate button -->
+          <!-- Algorithm & Array size input + generate button -->
           <div class="controls">
+            <label for="algorithm-select">Algorithm:</label>
+            <select id="algorithm-select" class="editor-select"
+              style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 0.9rem; font-weight: 500;"
+              aria-label="Select Algorithm">
+              <option value="bubble-sort" selected>Bubble Sort</option>
+              <option value="selection-sort">Selection Sort</option>
+              <option value="insertion-sort">Insertion Sort</option>
+              <option value="linear-search">Linear Search</option>
+              <option value="binary-search">Binary Search</option>
+            </select>
+
+            <div id="target-control-group" style="display: none; align-items: center; gap: 6px;">
+              <label for="target-input">Target:</label>
+              <input type="number" id="target-input" value="42"
+                style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--color-border);" />
+            </div>
+
             <label for="array-size-input">Array size:</label>
-            <input type="number" id="array-size-input" min="4" max="30" value="12" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--color-border);" />
+            <input type="number" id="array-size-input" min="4" max="30" value="12"
+              style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--color-border);" />
             <button class="btn btn-secondary" id="generate-btn">Generate New Array</button>
           </div>
 
@@ -82,7 +102,7 @@
           </ul>
 
           <h3 style="margin-top: 20px;">Algorithm Explanation</h3>
-          <p style="color: var(--color-text-light); font-size: 0.9rem; margin-top: 8px;">
+          <p id="algo-explanation-text" style="color: var(--color-text-light); font-size: 0.9rem; margin-top: 8px;">
             Bubble Sort repeatedly steps through the array, compares each pair of
             adjacent elements, and swaps them if they are in the wrong order.
             This process repeats until no swaps are needed, meaning the array is sorted.
@@ -91,12 +111,32 @@
 
           <h3 style="margin-top: 20px;">Complexity</h3>
           <table class="complexity-table">
-            <tr><th>Case</th><th>Time Complexity</th></tr>
-            <tr><td>Best Case</td><td>O(n)</td></tr>
-            <tr><td>Average Case</td><td>O(n&sup2;)</td></tr>
-            <tr><td>Worst Case</td><td>O(n&sup2;)</td></tr>
-            <tr><th colspan="2">Space Complexity</th></tr>
-            <tr><td colspan="2">O(1) &mdash; sorts in place</td></tr>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Time Complexity</th>
+              </tr>
+            </thead>
+            <tbody id="complexity-tbody">
+              <tr>
+                <td>Best Case</td>
+                <td>O(n)</td>
+              </tr>
+              <tr>
+                <td>Average Case</td>
+                <td>O(n&sup2;)</td>
+              </tr>
+              <tr>
+                <td>Worst Case</td>
+                <td>O(n&sup2;)</td>
+              </tr>
+              <tr>
+                <th colspan="2">Space Complexity</th>
+              </tr>
+              <tr>
+                <td colspan="2">O(1) &mdash; sorts in place</td>
+              </tr>
+            </tbody>
           </table>
         </div>
 
@@ -111,6 +151,7 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/visualizer.js"></script>
+  <script type="module" src="js/visualizer.js"></script>
 </body>
+
 </html>
