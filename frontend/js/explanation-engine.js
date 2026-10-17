@@ -681,6 +681,20 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
     };
   }
 
+  // Linked List Traversal Loop: while (curr != null) or while (current != null)
+  const llWhileLoopMatch = rawLine.match(/^while\s*\(\s*(curr|current|node)\s*!=\s*null\s*\)/i);
+  if (llWhileLoopMatch) {
+    const [, ptrVar] = llWhileLoopMatch;
+    const ptrVal = variables[ptrVar]?.value;
+    return {
+      category: 'Linked List Traversal Loop',
+      what: `Evaluating traversal loop: while (${ptrVar} != null). Pointer ${ptrVar} is currently ${ptrVal !== undefined ? (ptrVal === null ? 'null (End of list)' : 'pointing to a node') : 'active'}.`,
+      why: 'Loops through sequentially linked nodes until reaching null at the end of the list.',
+      stateChips: [{ label: ptrVar, value: ptrVal !== null ? 'Node' : 'null', highlight: true }],
+      tip: 'In a singly linked list, traversal stops when the pointer encounters the terminal null reference.',
+    };
+  }
+
   // 11. While loop header: while (cond)
   const whileLoopMatch = rawLine.match(/^while\s*\(\s*(.+)\s*\)/);
   if (whileLoopMatch) {
@@ -750,6 +764,19 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
         : 'Target was not located during the scan. The program proceeds to report that the item is absent.',
       stateChips: chips,
       tip: 'The foundIndex value determines whether the target found or not found branch executes.',
+    };
+  }
+
+  // BST: Base Case Null Check: if (root == null)
+  const bstNullCheckMatch = rawLine.match(/if\s*\(\s*([a-zA-Z_]\w*)\s*==\s*null\s*\)/i);
+  if (bstNullCheckMatch) {
+    const [, nodeVar] = bstNullCheckMatch;
+    return {
+      category: 'BST Null Check (Base Case)',
+      what: `Checking if '${nodeVar}' reference is null.`,
+      why: 'Base case for recursive operations: indicates an empty subtree or end of branch.',
+      stateChips: [{ label: nodeVar, value: 'null check', highlight: true }],
+      tip: 'In recursion, base cases prevent infinite recursion and signal the point where a new node is inserted or search terminates.',
     };
   }
 
@@ -976,6 +1003,166 @@ function analyzeStepOperation({ rawLine, lineNumber, step, prevStep, nextStep, v
       tip: 'Dequeuing advances the front pointer to the next element waiting in line.',
     };
   }
+
+  // Linked List: Node Instantiation: Node newNode = new Node(data);
+  const llNodeNewMatch = rawLine.match(/(?:Node\s+)?([a-zA-Z_]\w*)\s*=\s*new\s+Node\(([^)]*)\);/i);
+  if (llNodeNewMatch) {
+    const [, nodeVar, dataExpr] = llNodeNewMatch;
+    return {
+      category: 'Linked List Node Creation',
+      what: `Creating new Node '${nodeVar}' with data value (${dataExpr.trim()}).`,
+      why: 'Allocates a new node dynamically with its data field initialized and next reference set to null.',
+      stateChips: [{ label: 'Node', value: nodeVar, highlight: true }, { label: 'Data', value: dataExpr.trim() }],
+      tip: 'Each linked list node stores data and a pointer reference to the next node in the sequence.',
+    };
+  }
+
+  // Linked List: Connect New Node to Head: newNode.next = head;
+  const llConnectHeadMatch = rawLine.match(/([a-zA-Z_]\w*)\.next\s*=\s*head\s*;/i);
+  if (llConnectHeadMatch) {
+    const [, nodeVar] = llConnectHeadMatch;
+    return {
+      category: 'Connect Node to Head',
+      what: `Setting ${nodeVar}.next = head to point to the current start of the list.`,
+      why: 'Links the newly created node so that the existing chain follows behind it.',
+      stateChips: [{ label: `${nodeVar}.next`, value: 'head', highlight: true }],
+      tip: 'Pointing next to head preserves the rest of the list before moving the head pointer.',
+    };
+  }
+
+  // Linked List: Update Head Pointer: head = newNode;
+  const llUpdateHeadMatch = rawLine.match(/^head\s*=\s*([a-zA-Z_]\w*)\s*;/i);
+  if (llUpdateHeadMatch) {
+    const [, nodeVar] = llUpdateHeadMatch;
+    return {
+      category: 'Update Head Pointer',
+      what: `Updating head pointer to point to '${nodeVar}'.`,
+      why: 'Designates the new node as the first node in the linked list.',
+      stateChips: [{ label: 'head', value: nodeVar, highlight: true }],
+      tip: 'Insertion at the head is an O(1) constant-time operation because no traversal is required.',
+    };
+  }
+
+  // Linked List: Unlink node (Skip Deleted Node): curr.next = curr.next.next;
+  const llUnlinkMatch = rawLine.match(/([a-zA-Z_]\w*)\.next\s*=\s*\1\.next\.next\s*;/i);
+  if (llUnlinkMatch) {
+    const [, ptrVar] = llUnlinkMatch;
+    return {
+      category: 'Unlink Node (Deletion)',
+      what: `Bypassing target node: setting ${ptrVar}.next = ${ptrVar}.next.next.`,
+      why: 'Removes the node from the chain by pointing directly to the successor node.',
+      stateChips: [{ label: `${ptrVar}.next`, value: 'next.next', highlight: true }],
+      tip: 'Deleting a node in a singly linked list requires updating the predecessor node next pointer.',
+    };
+  }
+
+  // Linked List: Reverse Pointer Link: curr.next = prev;
+  const llReverseLinkMatch = rawLine.match(/([a-zA-Z_]\w*)\.next\s*=\s*prev\s*;/i);
+  if (llReverseLinkMatch) {
+    const [, ptrVar] = llReverseLinkMatch;
+    return {
+      category: 'Reverse Pointer Link',
+      what: `Reversing link: setting ${ptrVar}.next = prev.`,
+      why: 'Flips the directional arrow of the current node to point to its predecessor instead of its successor.',
+      stateChips: [{ label: `${ptrVar}.next`, value: 'prev', highlight: true }],
+      tip: 'Iterative reversal updates next pointers node-by-node using three tracking pointers (prev, curr, next).',
+    };
+  }
+
+  // Linked List: Connect Node to Next (Tail/Insertion): curr.next = newNode;
+  const llConnectNextMatch = rawLine.match(/([a-zA-Z_]\w*)\.next\s*=\s*([a-zA-Z_]\w*)\s*;/i);
+  if (llConnectNextMatch) {
+    const [, currVar, nextVar] = llConnectNextMatch;
+    return {
+      category: 'Link Node (Update Next Reference)',
+      what: `Linking ${currVar}.next = ${nextVar}.`,
+      why: 'Attaches the node to the successor in the chain.',
+      stateChips: [{ label: `${currVar}.next`, value: nextVar, highlight: true }],
+      tip: 'Modifying the next reference extends or splices the linked list sequence.',
+    };
+  }
+
+  // Linked List: Advance Traversal Pointer: curr = curr.next;
+  const llAdvancePtrMatch = rawLine.match(/([a-zA-Z_]\w*)\s*=\s*\1\.next\s*;/i);
+  if (llAdvancePtrMatch) {
+    const [, ptrVar] = llAdvancePtrMatch;
+    return {
+      category: 'Advance Traversal Pointer',
+      what: `Advancing ${ptrVar} to ${ptrVar}.next.`,
+      why: 'Moves the inspection pointer to the next consecutive node along the chain.',
+      stateChips: [{ label: ptrVar, value: 'next node', highlight: true }],
+      tip: 'Linked lists do not support index-based random access; finding an element requires sequential traversal.',
+    };
+  }
+
+  // Linked List: Initialize Traversal Pointer: Node curr = head;
+  const llInitPtrMatch = rawLine.match(/(?:Node\s+)?([a-zA-Z_]\w*)\s*=\s*head\s*;/i);
+  if (llInitPtrMatch) {
+    const [, ptrVar] = llInitPtrMatch;
+    return {
+      category: 'Initialize Traversal Pointer',
+      what: `Initializing traversal pointer '${ptrVar}' to start at head.`,
+      why: 'Begins sequential scan from the first node of the list.',
+      stateChips: [{ label: ptrVar, value: 'head', highlight: true }],
+      tip: 'All standard linked list traversals start at the head pointer.',
+    };
+  }
+
+  // BST: Node Creation Return: return new Node(val);
+  const bstNewNodeMatch = rawLine.match(/return\s+new\s+Node\(([^)]*)\);/i);
+  if (bstNewNodeMatch) {
+    const [, valExpr] = bstNewNodeMatch;
+    return {
+      category: 'BST Node Creation',
+      what: `Creating and returning a new BST leaf node with value (${valExpr.trim()}).`,
+      why: 'Allocates a new node dynamically with left and right children initialized to null.',
+      stateChips: [{ label: 'Node', value: `Node(${valExpr.trim()})`, highlight: true }],
+      tip: 'In a Binary Search Tree, new keys are always inserted as leaves at the appropriate null position.',
+    };
+  }
+
+  // BST: Recursive Child Subtree Updates: root.left = insert(root.left, val); / root.right = ...
+  const bstChildAssignMatch = rawLine.match(/([a-zA-Z_]\w*)\.(left|right)\s*=\s*([a-zA-Z_]\w*)\(([^)]*)\);/i);
+  if (bstChildAssignMatch) {
+    const [, rootVar, childSide, funcName, argsExpr] = bstChildAssignMatch;
+    const sideName = childSide.toLowerCase() === 'left' ? 'left' : 'right';
+    return {
+      category: `BST ${sideName.charAt(0).toUpperCase() + sideName.slice(1)} Subtree Update`,
+      what: `Setting ${rootVar}.${sideName} to the result of ${funcName}(${argsExpr}).`,
+      why: `Re-links the ${sideName} child reference after recursively processing the ${sideName} subtree.`,
+      stateChips: [{ label: `${rootVar}.${sideName}`, value: `${funcName}()`, highlight: true }],
+      tip: `BST recursively descends ${sideName === 'left' ? 'left for smaller values' : 'right for larger values'} and reconstructs child pointers on return.`,
+    };
+  }
+
+  // BST: Inorder Successor Replacement: root.val = successor.val;
+  const bstSuccessorAssignMatch = rawLine.match(/([a-zA-Z_]\w*)\.val\s*=\s*([a-zA-Z_]\w*)\.val\s*;/i);
+  if (bstSuccessorAssignMatch) {
+    const [, targetNode, succNode] = bstSuccessorAssignMatch;
+    return {
+      category: 'BST Successor Replacement',
+      what: `Replacing ${targetNode}.val with ${succNode}.val (Inorder Successor).`,
+      why: 'Preserves the Binary Search Tree invariant when deleting a node with two children.',
+      stateChips: [{ label: `${targetNode}.val`, value: `${succNode}.val`, highlight: true }],
+      tip: 'The inorder successor is the smallest value in the right subtree; it is greater than all left descendants and smaller than all remaining right descendants.',
+    };
+  }
+
+  // BST: Traversal Recursive Calls: inorder(root.left); / preorder(...) / postorder(...)
+  const bstTraversalCallMatch = rawLine.match(/(inorder|preorder|postorder)\s*\(\s*([a-zA-Z_]\w*)\.(left|right)\s*\)\s*;/i);
+  if (bstTraversalCallMatch) {
+    const [, travType, nodeVar, childSide] = bstTraversalCallMatch;
+    const travName = travType.toLowerCase();
+    const orderDesc = travName === 'inorder' ? 'Left \u2192 Root \u2192 Right' : (travName === 'preorder' ? 'Root \u2192 Left \u2192 Right' : 'Left \u2192 Right \u2192 Root');
+    return {
+      category: `${travName.charAt(0).toUpperCase() + travName.slice(1)} Traversal (${childSide})`,
+      what: `Recursively invoking ${travName}() on ${nodeVar}.${childSide} child.`,
+      why: `Visits the ${childSide} subtree in ${travName} order (${orderDesc}).`,
+      stateChips: [{ label: 'Traversal', value: travName, highlight: true }, { label: 'Branch', value: childSide }],
+      tip: travName === 'inorder' ? 'Inorder traversal of a BST visits nodes in strictly ascending sorted order.' : 'Tree traversals visit each of the n nodes exactly once in O(n) total time.',
+    };
+  }
+
 
   // 15. Pointer Decrement for Insertion Sort: j--; or j = j - 1;
   if (/^j\s*(--|\s*=\s*j\s*-\s*1)\s*;/.test(rawLine)) {

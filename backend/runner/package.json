@@ -17,6 +17,8 @@
     "test:binary": "node --test tests/binary-search.test.js",
     "test:stack": "node --test tests/stack.test.js",
     "test:queue": "node --test tests/queue.test.js",
+    "test:linkedlist": "node --test tests/linkedlist.test.js",
+    "test:tree": "node --test tests/tree.test.js",
     "test:bugfix": "node --test tests/routing-and-playback.test.js",
     "start": "node server.js"
   },

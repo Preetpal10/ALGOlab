@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Singly Linked List Visualizer - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">ALGO<span>LAB</span></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="codelab.html">Code Lab</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="visualizer.html">Visualizer</a></li>
+        <li><a href="stack.html">Stack Lab</a></li>
+        <li><a href="queue.html">Queue Lab</a></li>
+        <li><a href="linkedlist.html" class="active">Linked List Lab</a></li>
+        <li><a href="tree.html">Tree Lab</a></li>
+        <li><a href="maze.html">Maze Lab</a></li>
+        <li><a href="index.html#about">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 40px 0 10px;">
+    <div class="container">
+      <h1 id="ll-title">Singly Linked List <span class="highlight">Visualizer</span></h1>
+      <p id="ll-desc">Explore node-based linear data structures with head pointer tracking, dynamic insertions, deletions, sequential search, traversal, and pointer reversal.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN LAYOUT ===================== -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="visualizer-layout">
+
+        <!-- LEFT: Linked List Canvas + Action Controls -->
+        <div class="panel">
+
+          <!-- Primary Operation Controls -->
+          <div class="controls" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="ll-input-val">Value:</label>
+              <input type="number" id="ll-input-val" class="stack-input" value="10" placeholder="Val" aria-label="Node Value" style="width: 70px;" />
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="ll-input-pos">Pos:</label>
+              <input type="number" id="ll-input-pos" class="stack-input" value="0" min="0" placeholder="Pos" aria-label="Position Index" style="width: 60px;" />
+            </div>
+
+            <button class="btn btn-insert" id="insert-head-btn" title="Insert new node at the head">Insert Head</button>
+            <button class="btn btn-insert" id="insert-tail-btn" title="Insert new node at the tail">Insert Tail</button>
+            <button class="btn btn-insert" id="insert-pos-btn" title="Insert node at specified zero-based index">Insert at Pos</button>
+            <button class="btn btn-delete" id="delete-val-btn" title="Delete first node matching value">Delete Val</button>
+            <button class="btn btn-delete" id="delete-pos-btn" title="Delete node at specified zero-based index">Delete at Pos</button>
+          </div>
+
+          <!-- Secondary Actions & Scenarios -->
+          <div class="controls" style="margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-search" id="search-btn" title="Search for node matching value">Search</button>
+            <button class="btn btn-traverse" id="traverse-btn" title="Traverse from head to tail">Traverse</button>
+            <button class="btn btn-reverse" id="reverse-btn" title="Reverse the linked list pointers">Reverse List</button>
+            <button class="btn btn-secondary" id="clear-btn" title="Clear all nodes from list">Clear</button>
+
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+              <label for="scenario-select">Scenarios:</label>
+              <select id="scenario-select" class="editor-select" aria-label="Pre-built Scenarios"
+                style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 0.85rem;">
+                <option value="custom">Custom Interactive</option>
+                <option value="basic">Basic List (10, 20, 30)</option>
+                <option value="pos-insert">Position Insert Demo</option>
+                <option value="delete-demo">Delete Demo (Head, Mid, Tail)</option>
+                <option value="search-demo">Search Demo (Target 20)</option>
+                <option value="reverse-demo">Reverse List Demo</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Horizontal Linked List Canvas -->
+          <div class="ll-visual-wrapper">
+            <div id="ll-container" aria-label="Horizontal Linked List Canvas"></div>
+          </div>
+
+          <!-- Step Message Box -->
+          <div id="step-message" class="step-message-box">Linked list initialized. The list is currently empty.</div>
+
+          <!-- Playback Controls -->
+          <div class="controls">
+            <button class="btn btn-primary" id="play-btn">Play</button>
+            <button class="btn btn-secondary" id="pause-btn" disabled>Pause</button>
+            <button class="btn btn-secondary" id="prev-btn" disabled>Prev Step</button>
+            <button class="btn btn-secondary" id="next-btn" disabled>Next Step</button>
+            <button class="btn btn-secondary" id="reset-timeline-btn">Reset</button>
+
+            <div class="speed-group">
+              <label for="speed-range">Speed</label>
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
+              <input type="range" id="speed-range" min="100" max="1500" value="800" step="100" />
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: State Inspector & Educational Info -->
+        <div class="panel">
+          <h3>Linked List State Inspector</h3>
+          <ul class="info-list">
+            <li><span>Timeline Step</span> <span id="current-step-value" style="font-weight: 600;">0 / 0</span></li>
+            <li><span>List Length</span> <span id="ll-length-value" style="font-weight: 600;">0</span></li>
+            <li><span>Head Node</span> <span id="ll-head-value" style="font-family: monospace; font-weight: 700;">null</span></li>
+            <li><span>Inspected Node</span> <span id="ll-current-node-value" style="font-family: monospace; font-weight: 600;">None</span></li>
+            <li><span>Last Operation</span> <span id="ll-operation-value" style="font-weight: 600;">INITIAL</span></li>
+            <li><span>Search Result</span> <span id="ll-search-result-value" style="font-weight: 600;">N/A</span></li>
+            <li><span>Node Chain</span> <span id="ll-chain-value" style="font-family: monospace; font-size: 0.8rem; word-break: break-all;">HEAD &rarr; NULL</span></li>
+            <li><span>Status</span> <span id="ll-status-value"><span class="status-badge badge-empty">Empty</span></span></li>
+          </ul>
+
+          <div style="margin-top: 20px;">
+            <div class="explanation-card" style="border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 0.95rem; color: var(--color-primary-dark); margin: 0;">Step Explanation</h4>
+                <span id="explanation-op" class="badge" style="background: #eef2ff; color: var(--color-primary); font-size: 0.75rem; padding: 2px 6px;">INITIAL</span>
+              </div>
+              <p id="explanation-what" style="font-size: 0.88rem; color: var(--color-text); margin-bottom: 8px; font-weight: 500;">Created an empty Singly Linked List.</p>
+              <p id="explanation-why" style="font-size: 0.82rem; color: var(--color-text-light); line-height: 1.45; margin-bottom: 8px;">Head pointer is set to null, indicating that no nodes currently exist.</p>
+              <div id="explanation-summary" style="font-size: 0.78rem; font-family: monospace; color: #475569; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">Length: 0 | Head: null</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px;">Complexity Reference</h4>
+            <table class="complexity-table">
+              <tbody>
+                <tr><td>Insert at Head</td><td>O(1) &mdash; constant time pointer update</td></tr>
+                <tr><td>Insert at Tail</td><td>O(n) &mdash; requires traversal to last node</td></tr>
+                <tr><td>Insert at Position</td><td>O(n) &mdash; requires traversing to position</td></tr>
+                <tr><td>Delete Head</td><td>O(1) &mdash; advance head pointer</td></tr>
+                <tr><td>Delete by Value</td><td>O(n) &mdash; locate predecessor node</td></tr>
+                <tr><td>Delete at Position</td><td>O(n) &mdash; traverse to target position</td></tr>
+                <tr><td>Search by Value</td><td>O(n) &mdash; sequential scan</td></tr>
+                <tr><td>Traversal</td><td>O(n) &mdash; visit all n nodes</td></tr>
+                <tr><td>Reverse List</td><td>O(n) &mdash; single pass pointer redirection</td></tr>
+                <tr><th colspan="2">Auxiliary Space Complexity</th></tr>
+                <tr><td colspan="2">O(1) &mdash; iterative pointer mutations; O(n) total nodes</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Educational Data Structures &amp; Algorithms Platform.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/linkedlist.js"></script>
+</body>
+
+</html>

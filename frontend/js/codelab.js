@@ -309,6 +309,168 @@ public class Solution {
         System.out.println("Queue operations completed successfully.");
     }
 }`,
+    "linked-list": `// ALGOLAB - Singly Linked List in Java
+public class Solution {
+    static class Node {
+        int data;
+        Node next;
+
+        Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    public static void main(String[] args) {
+        Node head = null;
+
+        // 1. Insert at head: 20, then 10 (list becomes 10 -> 20)
+        Node n1 = new Node(20);
+        n1.next = head;
+        head = n1;
+
+        Node n2 = new Node(10);
+        n2.next = head;
+        head = n2;
+
+        // 2. Insert at tail: 30 (list becomes 10 -> 20 -> 30)
+        Node n3 = new Node(30);
+        Node curr = head;
+        while (curr.next != null) {
+            curr = curr.next;
+        }
+        curr.next = n3;
+
+        // 3. Search for value 20
+        int target = 20;
+        boolean found = false;
+        curr = head;
+        int index = 0;
+        while (curr != null) {
+            if (curr.data == target) {
+                found = true;
+                break;
+            }
+            curr = curr.next;
+            index++;
+        }
+        System.out.println("Search " + target + ": found=" + found + " at index " + index);
+
+        // 4. Traversal
+        System.out.print("Linked List: ");
+        curr = head;
+        while (curr != null) {
+            System.out.print(curr.data + " -> ");
+            curr = curr.next;
+        }
+        System.out.println("null");
+    }
+}`,
+    "bst": `// ALGOLAB - Binary Search Tree (BST) in Java
+public class Solution {
+    static class Node {
+        int val;
+        Node left;
+        Node right;
+
+        Node(int val) {
+            this.val = val;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    static Node insert(Node root, int val) {
+        if (root == null) {
+            return new Node(val);
+        }
+        if (val < root.val) {
+            root.left = insert(root.left, val);
+        } else if (val > root.val) {
+            root.right = insert(root.right, val);
+        }
+        return root;
+    }
+
+    static boolean search(Node root, int target) {
+        if (root == null) {
+            return false;
+        }
+        if (root.val == target) {
+            return true;
+        }
+        if (target < root.val) {
+            return search(root.left, target);
+        } else {
+            return search(root.right, target);
+        }
+    }
+
+    static Node findMin(Node node) {
+        Node curr = node;
+        while (curr != null && curr.left != null) {
+            curr = curr.left;
+        }
+        return curr;
+    }
+
+    static Node delete(Node root, int val) {
+        if (root == null) {
+            return null;
+        }
+        if (val < root.val) {
+            root.left = delete(root.left, val);
+        } else if (val > root.val) {
+            root.right = delete(root.right, val);
+        } else {
+            // Case 1 & 2: Leaf or single child
+            if (root.left == null) {
+                return root.right;
+            } else if (root.right == null) {
+                return root.left;
+            }
+            // Case 3: Two children
+            Node successor = findMin(root.right);
+            root.val = successor.val;
+            root.right = delete(root.right, successor.val);
+        }
+        return root;
+    }
+
+    static void inorder(Node root) {
+        if (root != null) {
+            inorder(root.left);
+            System.out.print(root.val + " ");
+            inorder(root.right);
+        }
+    }
+
+    public static void main(String[] args) {
+        Node root = null;
+        int[] values = { 50, 30, 70, 20, 40, 60, 80 };
+
+        for (int v : values) {
+            root = insert(root, v);
+            System.out.println("INSERT: " + v);
+        }
+
+        System.out.print("INORDER: ");
+        inorder(root);
+        System.out.println();
+
+        boolean found40 = search(root, 40);
+        System.out.println("SEARCH 40: " + found40);
+
+        root = delete(root, 20);
+        System.out.println("DELETED: 20");
+
+        System.out.print("AFTER DELETION INORDER: ");
+        inorder(root);
+        System.out.println();
+
+        System.out.println("BST operations completed successfully.");
+    }
+}`,
     "reverse-array": `// ALGOLAB - Reverse Array in Java
 public class Solution {
     public static void main(String[] args) {

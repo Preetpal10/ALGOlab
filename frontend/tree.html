@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binary Tree &amp; BST Visualizer - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">ALGO<span>LAB</span></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="codelab.html">Code Lab</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="visualizer.html">Visualizer</a></li>
+        <li><a href="stack.html">Stack Lab</a></li>
+        <li><a href="queue.html">Queue Lab</a></li>
+        <li><a href="linkedlist.html">Linked List Lab</a></li>
+        <li><a href="tree.html" class="active">Tree Lab</a></li>
+        <li><a href="maze.html">Maze Lab</a></li>
+        <li><a href="index.html#about">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 40px 0 10px;">
+    <div class="container">
+      <h1 id="tree-title">Binary Tree &amp; BST <span class="highlight">Visualizer</span></h1>
+      <p id="tree-desc">Explore hierarchical tree data structures with interactive BST insertion, deletion (leaf, one-child, and two-child cases), search, in/pre/post/level-order traversals, and animated playback.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN LAYOUT ===================== -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="visualizer-layout">
+
+        <!-- LEFT: Tree Canvas + Action Controls -->
+        <div class="panel">
+
+          <!-- Primary Operation Controls -->
+          <div class="controls" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="tree-input-val">Value:</label>
+              <input type="number" id="tree-input-val" class="stack-input" value="50" placeholder="Val" aria-label="Node Value" style="width: 70px;" />
+            </div>
+
+            <button class="btn btn-insert" id="insert-btn" title="Insert value into BST">Insert</button>
+            <button class="btn btn-delete" id="delete-btn" title="Delete value from BST (leaf, 1-child, 2-child cases)">Delete</button>
+            <button class="btn btn-search" id="search-btn" title="Search for value in BST">Search</button>
+
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+              <label for="scenario-select">Scenarios:</label>
+              <select id="scenario-select" class="editor-select" aria-label="Pre-built Scenarios"
+                style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 0.85rem;">
+                <option value="custom">Custom Interactive</option>
+                <option value="balanced" selected>Balanced BST (50, 30, 70, 20, 40, 60, 80)</option>
+                <option value="deletion-two-child">Two-Child Deletion Demo</option>
+                <option value="skewed">Degenerate / Skewed Tree</option>
+                <option value="search-demo">Search Demo (Target 40)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Traversal Actions -->
+          <div class="controls" style="margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-traverse" id="inorder-btn" title="Inorder Traversal: Left &rarr; Root &rarr; Right (Sorted Order)">Inorder</button>
+            <button class="btn btn-traverse" id="preorder-btn" title="Preorder Traversal: Root &rarr; Left &rarr; Right">Preorder</button>
+            <button class="btn btn-traverse" id="postorder-btn" title="Postorder Traversal: Left &rarr; Right &rarr; Root">Postorder</button>
+            <button class="btn btn-traverse" id="levelorder-btn" title="Level-Order Traversal (Breadth-First Search)">Level-Order</button>
+            <button class="btn btn-secondary" id="clear-btn" title="Clear all nodes from tree">Clear Tree</button>
+          </div>
+
+          <!-- Tree Visual Canvas -->
+          <div class="tree-visual-wrapper">
+            <div id="tree-container" aria-label="Binary Search Tree Canvas"></div>
+          </div>
+
+          <!-- Traversal Stream Bar -->
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 0.82rem; font-weight: 600; color: var(--color-text-light);">Traversal Stream Output:</label>
+            <div id="traversal-stream" class="traversal-stream">
+              <span style="color: #94a3b8; font-style: italic;">No traversal running. Click Inorder, Preorder, Postorder, or Level-Order.</span>
+            </div>
+          </div>
+
+          <!-- Step Message Box -->
+          <div id="step-message" class="step-message-box">Binary Search Tree initialized.</div>
+
+          <!-- Playback Controls -->
+          <div class="controls">
+            <button class="btn btn-primary" id="play-btn">Play</button>
+            <button class="btn btn-secondary" id="pause-btn" disabled>Pause</button>
+            <button class="btn btn-secondary" id="prev-btn" disabled>Prev Step</button>
+            <button class="btn btn-secondary" id="next-btn" disabled>Next Step</button>
+            <button class="btn btn-secondary" id="reset-timeline-btn">Reset</button>
+
+            <div class="speed-group">
+              <label for="speed-range">Speed</label>
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
+              <input type="range" id="speed-range" min="100" max="1500" value="800" step="100" />
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: State Inspector & Educational Info -->
+        <div class="panel">
+          <h3>Tree State Inspector</h3>
+          <ul class="info-list">
+            <li><span>Timeline Step</span> <span id="current-step-value" style="font-weight: 600;">0 / 0</span></li>
+            <li><span>Total Nodes</span> <span id="tree-node-count-value" style="font-weight: 600;">0</span></li>
+            <li><span>Tree Height</span> <span id="tree-height-value" style="font-weight: 600;">0</span></li>
+            <li><span>Root Value</span> <span id="tree-root-value" style="font-family: monospace; font-weight: 700;">null</span></li>
+            <li><span>Inspected Node</span> <span id="tree-inspected-value" style="font-family: monospace; font-weight: 600;">None</span></li>
+            <li><span>Last Operation</span> <span id="tree-operation-value" style="font-weight: 600;">INITIAL</span></li>
+            <li><span>Search Result</span> <span id="tree-search-result-value" style="font-weight: 600;">N/A</span></li>
+            <li><span>Status</span> <span id="tree-status-value"><span class="status-badge badge-empty">Empty</span></span></li>
+          </ul>
+
+          <div style="margin-top: 20px;">
+            <div class="explanation-card" style="border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 0.95rem; color: var(--color-primary-dark); margin: 0;">Step Explanation</h4>
+                <span id="explanation-op" class="badge" style="background: #eef2ff; color: var(--color-primary); font-size: 0.75rem; padding: 2px 6px;">INITIAL</span>
+              </div>
+              <p id="explanation-what" style="font-size: 0.88rem; color: var(--color-text); margin-bottom: 8px; font-weight: 500;">Created a Binary Search Tree.</p>
+              <p id="explanation-why" style="font-size: 0.82rem; color: var(--color-text-light); line-height: 1.45; margin-bottom: 8px;">A Binary Search Tree maintains the invariant: left subtree values &lt; node value &lt; right subtree values.</p>
+              <div id="explanation-summary" style="font-size: 0.78rem; font-family: monospace; color: #475569; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">Nodes: 0 | Height: 0 | Root: null</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px;">Complexity Reference</h4>
+            <table class="complexity-table">
+              <thead>
+                <tr>
+                  <th>Operation</th>
+                  <th>Balanced (Avg)</th>
+                  <th>Degenerate (Worst)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Search</td><td>O(log n)</td><td>O(n)</td></tr>
+                <tr><td>Insertion</td><td>O(log n)</td><td>O(n)</td></tr>
+                <tr><td>Deletion</td><td>O(log n)</td><td>O(n)</td></tr>
+                <tr><td>Inorder / Preorder / Postorder</td><td>O(n)</td><td>O(n)</td></tr>
+                <tr><td>Level-Order (BFS)</td><td>O(n)</td><td>O(n)</td></tr>
+                <tr><th colspan="3">Space Complexity</th></tr>
+                <tr><td colspan="3">Auxiliary Space: O(h) recursion stack (h = height; log n to n) | Storage: O(n)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Educational Data Structures &amp; Algorithms Platform.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/tree.js"></script>
+</body>
+
+</html>
