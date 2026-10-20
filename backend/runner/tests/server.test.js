@@ -526,4 +526,182 @@ describe('ALGOLAB HTTP API (Phase 6)', () => {
       proc.kill('SIGKILL');
     }
   });
+
+  // -------------------------------------------------------------------------
+  // CORS & Environment-Driven Configuration Tests (Phase 12.2)
+  // -------------------------------------------------------------------------
+
+  // Test 15: Configured production origin receives Access-Control-Allow-Origin
+  test('15. Configured production origin receives Access-Control-Allow-Origin', async () => {
+    const prodOrigin = 'https://thriving-tanuki-9df908.netlify.app';
+    const server = await startTestServer({ allowedOrigins: [prodOrigin] });
+    try {
+      const res = await httpRequest(server, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: prodOrigin },
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.headers['access-control-allow-origin'], prodOrigin);
+      assert.equal(res.headers['vary'], 'Origin');
+      assert.notEqual(res.headers['access-control-allow-origin'], '*');
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 16: Approved localhost development origin receives Access-Control-Allow-Origin
+  test('16. Approved localhost development origin receives Access-Control-Allow-Origin', async () => {
+    const server = await startTestServer(); // default local allowlist
+    try {
+      // 1. http://localhost:8000
+      const resLocalhost = await httpRequest(server, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: 'http://localhost:8000' },
+      });
+      assert.equal(resLocalhost.statusCode, 200);
+      assert.equal(resLocalhost.headers['access-control-allow-origin'], 'http://localhost:8000');
+      assert.equal(resLocalhost.headers['vary'], 'Origin');
+
+      // 2. http://127.0.0.1:3000
+      const resIp = await httpRequest(server, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: 'http://127.0.0.1:3000' },
+      });
+      assert.equal(resIp.statusCode, 200);
+      assert.equal(resIp.headers['access-control-allow-origin'], 'http://127.0.0.1:3000');
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 17: Rejected unapproved origin is denied CORS headers and rejected with 403
+  test('17. Rejected unapproved origin is denied CORS headers and rejected with 403', async () => {
+    const server = await startTestServer({ allowedOrigins: ['https://thriving-tanuki-9df908.netlify.app'] });
+    try {
+      // Unapproved origin GET
+      const resGet = await httpRequest(server, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: 'https://malicious-site.example.com' },
+      });
+      assert.equal(resGet.statusCode, 403);
+      assert.equal(resGet.headers['access-control-allow-origin'], undefined);
+      assert.equal(resGet.json?.error, 'CORS origin not allowed.');
+
+      // Unapproved origin POST /api/execute
+      const resPost = await httpRequest(server, {
+        method: 'POST',
+        path: '/api/execute',
+        headers: {
+          Origin: 'https://attacker.org',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: 'public class Solution { public static void main(String[] args) {} }' }),
+      });
+      assert.equal(resPost.statusCode, 403);
+      assert.equal(resPost.headers['access-control-allow-origin'], undefined);
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 18: Missing Origin header is handled safely without wildcard CORS
+  test('18. Missing Origin header is handled safely without crashing or wildcard CORS', async () => {
+    const server = await startTestServer();
+    try {
+      const res = await httpRequest(server, {
+        method: 'GET',
+        path: '/api/health',
+        // No Origin header sent (non-browser request, curl, tests)
+      });
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.headers['access-control-allow-origin'], undefined);
+      assert.notEqual(res.headers['access-control-allow-origin'], '*');
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 19: OPTIONS preflight returns 204 with allowed methods/headers for permitted origin, 403 for unapproved
+  test('19. OPTIONS preflight returns 204 with allowed methods/headers for permitted origin, 403 for unapproved', async () => {
+    const prodOrigin = 'https://thriving-tanuki-9df908.netlify.app';
+    const server = await startTestServer({ allowedOrigins: [prodOrigin] });
+    try {
+      // Approved preflight
+      const resApproved = await httpRequest(server, {
+        method: 'OPTIONS',
+        path: '/api/execute',
+        headers: {
+          Origin: prodOrigin,
+          'Access-Control-Request-Method': 'POST',
+          'Access-Control-Request-Headers': 'Content-Type',
+        },
+      });
+      assert.equal(resApproved.statusCode, 204);
+      assert.equal(resApproved.headers['access-control-allow-origin'], prodOrigin);
+      assert.ok(resApproved.headers['access-control-allow-methods']?.includes('POST'));
+      assert.ok(resApproved.headers['access-control-allow-headers']?.includes('Content-Type'));
+      assert.equal(resApproved.headers['access-control-max-age'], '86400');
+
+      // Unapproved preflight
+      const resDenied = await httpRequest(server, {
+        method: 'OPTIONS',
+        path: '/api/execute',
+        headers: {
+          Origin: 'https://evil.example.com',
+          'Access-Control-Request-Method': 'POST',
+        },
+      });
+      assert.equal(resDenied.statusCode, 403);
+      assert.equal(resDenied.headers['access-control-allow-origin'], undefined);
+      assert.equal(resDenied.json?.error, 'CORS origin denied.');
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 20: Origin: null is not trusted by default and rejected
+  test('20. Origin: null is not trusted by default and rejected', async () => {
+    // 1. Default server (allowNullOrigin is false)
+    const serverDefault = await startTestServer();
+    try {
+      const resNull = await httpRequest(serverDefault, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: 'null' },
+      });
+      assert.equal(resNull.statusCode, 403);
+      assert.equal(resNull.headers['access-control-allow-origin'], undefined);
+      assert.equal(resNull.json?.error, 'CORS origin not allowed.');
+
+      // Preflight with Origin: null rejected
+      const resOptionsNull = await httpRequest(serverDefault, {
+        method: 'OPTIONS',
+        path: '/api/execute',
+        headers: { Origin: 'null' },
+      });
+      assert.equal(resOptionsNull.statusCode, 403);
+      assert.equal(resOptionsNull.headers['access-control-allow-origin'], undefined);
+    } finally {
+      await stopTestServer(serverDefault);
+    }
+
+    // 2. Server with explicit allowNullOrigin: true (local development file:// testing mode)
+    const serverAllowNull = await startTestServer({ allowNullOrigin: true });
+    try {
+      const resAllowedNull = await httpRequest(serverAllowNull, {
+        method: 'GET',
+        path: '/api/health',
+        headers: { Origin: 'null' },
+      });
+      assert.equal(resAllowedNull.statusCode, 200);
+      assert.equal(resAllowedNull.headers['access-control-allow-origin'], 'null');
+    } finally {
+      await stopTestServer(serverAllowNull);
+    }
+  });
 });

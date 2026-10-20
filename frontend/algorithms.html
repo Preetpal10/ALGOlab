@@ -8,30 +8,161 @@
 </head>
 <body>
 
-  <!-- ===================== NAVBAR ===================== -->
-  <header class="navbar">
-    <div class="container">
-      <div class="logo">ALGO<span>LAB</span></div>
-      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="codelab.html">Code Lab</a></li>
-        <li><a href="algorithms.html" class="active">Algorithms</a></li>
-        <li><a href="visualizer.html">Visualizer</a></li>
-        <li><a href="stack.html">Stack Lab</a></li>
-        <li><a href="queue.html">Queue Lab</a></li>
-        <li><a href="linkedlist.html">Linked List Lab</a></li>
-        <li><a href="tree.html">Tree Lab</a></li>
-        <li><a href="maze.html">Maze Lab</a></li>
-        <li><a href="index.html#about">About</a></li>
-      </ul>
+<div class="app-container">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">ALGO<span class="brand-highlight">LAB</span></span>
+      </a>
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">&times;</button>
     </div>
-  </header>
+
+    <div class="sidebar-badge-wrap">
+      <span class="sidebar-pill">B.Tech DSA Platform</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main Navigation">
+      <ul class="nav-sections-list" id="nav-links">
+        
+        <!-- MAIN -->
+        <li class="nav-section-header">MAIN</li>
+        <li>
+          <a href="index.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="dashboard.html" class="nav-link">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- CODING -->
+        <li class="nav-section-header">CODING</li>
+        <li>
+          <a href="codelab.html" class="nav-link">
+            <span class="nav-icon">💻</span>
+            <span class="nav-text">Code Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="practice.html" class="nav-link">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-text">Practice Arena</span>
+          </a>
+        </li>
+
+        <!-- ALGORITHMS -->
+        <li class="nav-section-header">ALGORITHMS</li>
+        <li>
+          <a href="algorithms.html" class="nav-link active">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">Algorithm Library</span>
+          </a>
+        </li>
+        <li>
+          <a href="visualizer.html" class="nav-link">
+            <span class="nav-icon">🔄</span>
+            <span class="nav-text">Visualizer</span>
+          </a>
+        </li>
+
+        <!-- DATA STRUCTURES -->
+        <li class="nav-section-header">DATA STRUCTURES</li>
+        <li>
+          <a href="stack.html" class="nav-link">
+            <span class="nav-icon">🥞</span>
+            <span class="nav-text">Stack Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="queue.html" class="nav-link">
+            <span class="nav-icon">🚶</span>
+            <span class="nav-text">Queue Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="linkedlist.html" class="nav-link">
+            <span class="nav-icon">🔗</span>
+            <span class="nav-text">Linked List Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="tree.html" class="nav-link">
+            <span class="nav-icon">🌳</span>
+            <span class="nav-text">Tree Lab</span>
+          </a>
+        </li>
+
+        <!-- ADVANCED LABS -->
+        <li class="nav-section-header">ADVANCED LABS</li>
+        <li>
+          <a href="graph.html" class="nav-link">
+            <span class="nav-icon">🕸️</span>
+            <span class="nav-text">Graph Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="maze.html" class="nav-link">
+            <span class="nav-icon">🧩</span>
+            <span class="nav-text">Maze Lab</span>
+          </a>
+        </li>
+
+        <!-- ACCOUNT -->
+        <li class="nav-section-header">ACCOUNT</li>
+        <li id="nav-auth-slot">
+          <a href="login.html" class="nav-link">
+            <span class="nav-icon">🔑</span>
+            <span class="nav-text">Login</span>
+          </a>
+          <a href="register.html" class="nav-link">
+            <span class="nav-icon">✨</span>
+            <span class="nav-text">Register</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-status-pill">
+        <span class="pulse-indicator"></span>
+        <span class="status-label">System Ready</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Main Content Layout -->
+  <div class="app-main">
+    <!-- Top Navigation Bar -->
+    <header class="app-topbar mobile-topbar">
+      <div class="topbar-left">
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="app-sidebar">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="topbar-brand">
+          <span>ALGO<span class="brand-highlight">LAB</span></span>
+        </a>
+      </div>
+      <nav class="topbar-links" aria-label="Quick Navigation">
+        <a href="index.html" class="topbar-link">Home</a>
+        <a href="dashboard.html" class="topbar-link">Dashboard</a>
+        <a href="index.html#about" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-right" id="mobile-auth-widget"></div>
+    </header>
+
 
   <!-- ===================== PAGE HEADER ===================== -->
-  <section class="hero" style="padding: 50px 0 20px;">
+  <section class="hero" style="padding: 44px 0 20px;">
     <div class="container">
       <h1>Algorithm <span class="highlight">Library</span></h1>
       <p>Pick a category to explore. Bubble Sort and Maze Lab are fully interactive in this build — everything else is coming soon.</p>
@@ -49,10 +180,10 @@
           <span class="badge badge-ready">Available</span>
           <h3>Sorting (Bubble, Selection &amp; Insertion)</h3>
           <p>Watch elements get compared, swapped, and shifted pass by pass.</p>
-          <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <a href="visualizer.html?algo=bubble-sort" class="btn btn-primary" style="flex: 1; text-align: center; padding: 6px 8px; font-size: 0.8rem;">Bubble</a>
-            <a href="visualizer.html?algo=selection-sort" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 6px 8px; font-size: 0.8rem;">Selection</a>
-            <a href="visualizer.html?algo=insertion-sort" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 6px 8px; font-size: 0.8rem;">Insertion</a>
+          <div class="card-actions">
+            <a href="visualizer.html?algo=bubble-sort" class="btn btn-primary" style="font-size: 0.84rem; padding: 6px 12px;">Bubble</a>
+            <a href="visualizer.html?algo=selection-sort" class="btn btn-secondary" style="font-size: 0.84rem; padding: 6px 12px;">Selection</a>
+            <a href="visualizer.html?algo=insertion-sort" class="btn btn-secondary" style="font-size: 0.84rem; padding: 6px 12px;">Insertion</a>
           </div>
         </div>
 
@@ -60,9 +191,9 @@
           <span class="badge badge-ready">Available</span>
           <h3>Searching (Linear &amp; Binary)</h3>
           <p>Scan elements sequentially or divide and conquer in a sorted array.</p>
-          <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <a href="visualizer.html?algo=linear-search" class="btn btn-primary" style="flex: 1; text-align: center; padding: 6px 8px; font-size: 0.8rem;">Linear Search</a>
-            <a href="visualizer.html?algo=binary-search" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 6px 8px; font-size: 0.8rem;">Binary Search</a>
+          <div class="card-actions">
+            <a href="visualizer.html?algo=linear-search" class="btn btn-primary" style="font-size: 0.84rem; padding: 6px 12px;">Linear Search</a>
+            <a href="visualizer.html?algo=binary-search" class="btn btn-secondary" style="font-size: 0.84rem; padding: 6px 12px;">Binary Search</a>
           </div>
         </div>
 
@@ -70,42 +201,54 @@
           <span class="badge badge-ready">Available</span>
           <h3>Stack (LIFO)</h3>
           <p>Push, pop, and peek operations visualized as a live vertical stack structure.</p>
-          <a href="stack.html" class="btn btn-primary" style="display: block; text-align: center; margin-top: 10px;">Open Stack Visualizer</a>
+          <div class="card-actions">
+            <a href="stack.html" class="btn btn-primary" style="width: 100%;">Open Stack Visualizer</a>
+          </div>
         </div>
 
         <div class="card algo-card" data-status="ready">
           <span class="badge badge-ready">Available</span>
           <h3>Queue (FIFO)</h3>
           <p>Enqueue, dequeue, and peek operations visualized in a horizontal pipeline with Front and Rear tracking.</p>
-          <a href="queue.html" class="btn btn-primary" style="display: block; text-align: center; margin-top: 10px;">Open Queue Visualizer</a>
+          <div class="card-actions">
+            <a href="queue.html" class="btn btn-primary" style="width: 100%;">Open Queue Visualizer</a>
+          </div>
         </div>
 
         <div class="card algo-card" data-status="ready">
           <span class="badge badge-ready">Available</span>
           <h3>Linked List (Singly)</h3>
           <p>Head/tail insertion, deletion, search, traversal, and reversal visualized with dynamic node and pointer tracking.</p>
-          <a href="linkedlist.html" class="btn btn-primary" style="display: block; text-align: center; margin-top: 10px;">Open Linked List Visualizer</a>
+          <div class="card-actions">
+            <a href="linkedlist.html" class="btn btn-primary" style="width: 100%;">Open Linked List Visualizer</a>
+          </div>
         </div>
 
         <div class="card algo-card" data-status="ready">
           <span class="badge badge-ready">Available</span>
           <h3>Trees (Binary &amp; BST)</h3>
           <p>Binary Search Tree insertion, deletion (leaf, 1-child, 2-child), search, and in/pre/post/level-order traversals.</p>
-          <a href="tree.html" class="btn btn-primary" style="display: block; text-align: center; margin-top: 10px;">Open Tree Visualizer</a>
+          <div class="card-actions">
+            <a href="tree.html" class="btn btn-primary" style="width: 100%;">Open Tree Visualizer</a>
+          </div>
         </div>
 
-        <div class="card algo-card disabled" data-status="soon">
-          <span class="badge badge-soon">Coming Soon</span>
+        <div class="card algo-card" data-status="ready">
+          <span class="badge badge-ready">Available</span>
           <h3>Graphs</h3>
-          <p>BFS, DFS, and shortest-path algorithms on an interactive graph.</p>
-          <button class="btn btn-secondary" disabled>Coming Soon</button>
+          <p>BFS, DFS, and Dijkstra shortest-path algorithms on an interactive graph.</p>
+          <div class="card-actions">
+            <a href="graph.html" class="btn btn-primary" style="width: 100%;">Open Graph Lab</a>
+          </div>
         </div>
 
         <div class="card algo-card" data-status="ready">
           <span class="badge badge-ready">Available</span>
           <h3>Maze Lab</h3>
-          <p>Generate a maze and watch BFS or DFS explore it in real time. (Dijkstra & A* coming soon.)</p>
-          <a href="maze.html" class="btn btn-primary">Open Maze Lab</a>
+          <p>Generate a maze and watch BFS or DFS explore it in real time. (Dijkstra &amp; A* coming soon.)</p>
+          <div class="card-actions">
+            <a href="maze.html" class="btn btn-primary" style="width: 100%;">Open Maze Lab</a>
+          </div>
         </div>
 
       </div>
@@ -117,7 +260,10 @@
       <p>&copy; 2026 ALGOLAB. Built as a B.Tech Data Structures & Algorithms project.</p>
     </div>
   </footer>
+  </div>
+</div>
 
   <script src="js/main.js"></script>
+  <script type="module" src="js/auth-nav.js"></script>
 </body>
 </html>

@@ -19,8 +19,21 @@
     "test:queue": "node --test tests/queue.test.js",
     "test:linkedlist": "node --test tests/linkedlist.test.js",
     "test:tree": "node --test tests/tree.test.js",
+    "test:graph": "node --test tests/graph.test.js",
+    "test:judge": "node --test tests/judge.test.js",
+    "test:transfer": "node --test tests/codelab-transfer.test.js",
+    "test:auth": "node --test tests/auth.test.js",
+    "test:submissions": "node --test tests/submissions.test.js",
+    "test:labstate": "node --test tests/lab-state.test.js",
+    "test:persistence": "node --test tests/lab-persistence.test.js",
+    "test:drafts": "node --test tests/codelab-draft.test.js tests/practice-draft.test.js",
     "test:bugfix": "node --test tests/routing-and-playback.test.js",
+    "db:migrate": "node db/migrate.js",
     "start": "node server.js"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "mysql2": "^3.24.6"
+  }
 }

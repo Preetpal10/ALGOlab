@@ -82,10 +82,12 @@ export async function runInContainer(request) {
   const tempDir = path.join(os.tmpdir(), `algolab_job_${jobId}`);
   const sourceFileName = `${mainClass}.java`;
   const sourceFilePath = path.join(tempDir, sourceFileName);
-
   try {
-    await fs.mkdir(tempDir, { recursive: true });
-    await fs.writeFile(sourceFilePath, code, 'utf-8');
+    // Ensure temporary directory and source file are readable by non-root container user (UID 1001) on Linux
+    await fs.mkdir(tempDir, { recursive: true, mode: 0o755 });
+    try { await fs.chmod(tempDir, 0o755); } catch (_) {}
+    await fs.writeFile(sourceFilePath, code, { encoding: 'utf-8', mode: 0o644 });
+    try { await fs.chmod(sourceFilePath, 0o644); } catch (_) {}
 
     // --- Step 3: Build Docker argument array ---
     const containerSourcePath = `/sandbox/build/${sourceFileName}`;

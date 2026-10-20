@@ -16,6 +16,35 @@
 //   Maze -> Grid (2D array) -> Algorithm -> Steps -> UI Animation
 // =====================================================
 
+export const MAZE_STORAGE_KEY = 'algolab_maze_state';
+
+/**
+ * Persists maze state (mazeData, size, algo) to web storage.
+ */
+export function saveMazeState(storage, state) {
+  try {
+    if (!storage || !state) return false;
+    storage.setItem(MAZE_STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (err) {
+    console.warn('Failed to save maze state:', err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved maze state from web storage.
+ */
+export function loadMazeState(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(MAZE_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+}
 
 /* =====================================================
    PART 1: MAZE GENERATION
@@ -420,7 +449,8 @@ function updateAlgorithmExplanation(elements, algorithmName) {
    playback using the steps produced in Part 4.
    ===================================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  document.addEventListener("DOMContentLoaded", function () {
   const gridContainer = document.getElementById("maze-grid");
   if (!gridContainer) {
     return; // Not on the Maze Lab page, do nothing
@@ -470,6 +500,17 @@ document.addEventListener("DOMContentLoaded", function () {
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     resetBtn.disabled = false;
+    persistMaze();
+  }
+
+  function persistMaze() {
+    if (mazeData) {
+      saveMazeState(localStorage, {
+        mazeData,
+        size: sizeSelect.value,
+        algo: algoSelect.value
+      });
+    }
   }
 
   // ---- Start solving with the currently selected algorithm ----
@@ -573,6 +614,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   algoSelect.addEventListener("change", function () {
     updateAlgorithmExplanation(infoElements, algoSelect.value);
+    persistMaze();
   });
 
   speedRange.addEventListener("input", function () {
@@ -584,7 +626,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ---- Initial page state ----
   updateAlgorithmExplanation(infoElements, algoSelect.value);
-  startBtn.disabled = true;
-  pauseBtn.disabled = true;
-  resetBtn.disabled = true;
+
+  // Restore saved maze if available
+  const savedMaze = loadMazeState(localStorage);
+  if (savedMaze && savedMaze.mazeData) {
+    mazeData = savedMaze.mazeData;
+    if (savedMaze.size && sizeSelect) sizeSelect.value = savedMaze.size;
+    if (savedMaze.algo && algoSelect) {
+      algoSelect.value = savedMaze.algo;
+      updateAlgorithmExplanation(infoElements, algoSelect.value);
+    }
+    renderMazeGrid(gridContainer, mazeData);
+    stepMessageEl.textContent = "Saved maze restored. Choose an algorithm and click Start.";
+    infoElements.infoStatus.textContent = "Ready";
+    startBtn.disabled = false;
+    pauseBtn.disabled = true;
+    resetBtn.disabled = false;
+  } else {
+    startBtn.disabled = true;
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+  }
 });
+}
+
+export { generateMaze, runMazeAlgorithm };

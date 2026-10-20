@@ -8,6 +8,36 @@
 // and Transparent Educational State Explanations.
 // =============================================================================
 
+export const QUEUE_STORAGE_KEY = 'algolab_queue_state';
+
+/**
+ * Persists queue elements to web storage.
+ */
+export function saveQueueState(storage, state) {
+  try {
+    if (!storage || !state) return false;
+    storage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (err) {
+    console.warn('Failed to save queue state:', err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved queue elements from web storage.
+ */
+export function loadQueueState(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(QUEUE_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * Core Queue Data Structure Engine.
  * Operates purely on state and generates verifiable step snapshots.
@@ -417,8 +447,18 @@ if (typeof document !== 'undefined') {
     const explanationWhy = document.getElementById('explanation-why');
     const explanationSummary = document.getElementById('explanation-summary');
 
-    // Initialize Queue Engine
-    const queue = new QueueEngine();
+    // Initialize Queue Engine with saved elements if present
+    const savedState = loadQueueState(typeof window !== 'undefined' ? window.localStorage : null);
+    const initialElements = (savedState && Array.isArray(savedState.elements)) ? savedState.elements : [];
+    const queue = new QueueEngine(initialElements);
+
+    function persistCurrentQueue() {
+      const state = {
+        elements: [...queue.elements],
+        timestamp: Date.now()
+      };
+      saveQueueState(typeof window !== 'undefined' ? window.localStorage : null, state);
+    }
 
     // Auto-play interval state & generation token
     let isPlaying = false;
@@ -656,6 +696,7 @@ if (typeof document !== 'undefined') {
         const numVal = (rawVal !== '' && !isNaN(Number(rawVal))) ? Number(rawVal) : Math.floor(Math.random() * 90) + 10;
         const step = queue.enqueue(numVal);
         renderStep(step);
+        persistCurrentQueue();
         if (queueInput) {
           queueInput.value = Math.floor(Math.random() * 90) + 10;
         }
@@ -678,6 +719,7 @@ if (typeof document !== 'undefined') {
         pause();
         const step = queue.dequeue();
         renderStep(step);
+        persistCurrentQueue();
       });
     }
 
@@ -696,6 +738,7 @@ if (typeof document !== 'undefined') {
         pause();
         queue.resetSequence();
         renderStep(queue.getCurrentStep());
+        persistCurrentQueue();
       });
     }
 

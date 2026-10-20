@@ -1,89 +1,116 @@
-# ALGOLAB — Interactive Data Structures & Algorithms Learning Platform
+# ALGOLAB
+### Interactive Data Structures and Algorithm Visualization & Learning Platform
 
-**Learn DSA by visualizing algorithms, executing Java programs, and understanding how code works step by step.**
+**Learn algorithms by watching them execute.**
 
-ALGOLAB is an interactive web-based learning platform designed to help students understand Data Structures and Algorithms (DSA) through visualizations, Java code execution, execution tracing, and educational explanations.
+ALGOLAB is a web-based educational platform designed to help students understand Data Structures and Algorithms (DSA) through interactive visualizations, Java code execution, step-by-step execution tracing, and programming practice.
 
-Instead of only reading algorithm implementations, students can explore how algorithms work, observe changes in data structures, execute Java code, and inspect program execution step by step.
-
-> **Project Status:** Active Development  
-> **Project Type:** B.Tech Computer Science & Engineering Project
+Instead of relying only on static diagrams or theoretical explanations, ALGOLAB provides an interactive environment where learners can explore algorithm behavior, observe changes in data structures, write Java programs, inspect variable states, and practice solving programming problems.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Overview](#overview)
+- [Project Overview](#project-overview)
 - [Problem Statement](#problem-statement)
-- [Project Objectives](#project-objectives)
-- [Features](#features)
+- [Objectives](#objectives)
+- [Key Features](#key-features)
 - [Technology Stack](#technology-stack)
 - [System Architecture](#system-architecture)
 - [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
+- [Installation and Setup](#installation-and-setup)
 - [Running the Application](#running-the-application)
-- [Java Code Execution and Tracing](#java-code-execution-and-tracing)
-- [Automated Testing](#automated-testing)
+- [Testing](#testing)
+- [Database Overview](#database-overview)
+- [Security Considerations](#security-considerations)
 - [Current Limitations](#current-limitations)
-- [Future Enhancements](#future-enhancements)
+- [Future Scope](#future-scope)
+- [Academic Information](#academic-information)
 - [Contributing](#contributing)
-- [Author](#author)
+- [License](#license)
 
 ---
 
-## 📖 Overview
+## Project Overview
 
-Learning DSA can be challenging when students have to understand algorithms only through theoretical explanations or static code examples.
+Learning Data Structures and Algorithms is an essential part of computer science education. However, understanding how algorithms execute internally can be difficult when students only read source code or study static diagrams.
 
-ALGOLAB aims to make learning more interactive by combining algorithm visualization with Java programming and execution tracing.
+ALGOLAB addresses this challenge by connecting algorithm theory with interactive execution and visualization.
 
-The platform brings together several learning modules:
+The platform provides dedicated learning environments for sorting, searching, linear data structures, trees, graphs, and maze pathfinding. Its Code Lab allows students to write Java programs and inspect their execution through tracing and visualization tools. The Practice Arena provides programming problems and a workflow for evaluating submitted solutions.
 
-- **Algorithm Visualizer:** Understand sorting and searching algorithms through visual steps.
-- **Code Lab:** Write and execute Java programs.
-- **Execution Tracing:** Inspect captured program execution events and variable states.
-- **Stack Lab:** Learn stack operations through interactive LIFO visualization.
-- **Queue Lab:** Understand queue operations through FIFO visualization.
-- **Maze Lab:** Explore pathfinding algorithms such as BFS and DFS.
-- **Algorithm Explorer:** Browse supported algorithms and data structures.
+### Core Learning Workflow
 
-The goal is to help students move from memorizing algorithms to understanding how they execute.
+1. **Explore:** Select an algorithm or data structure.
+2. **Understand:** Examine its logic and behavior.
+3. **Write Code:** Create or modify a Java program.
+4. **Execute:** Run the program in the supported execution environment.
+5. **Visualize:** Observe execution steps and relevant program state.
+6. **Practice:** Solve programming problems and review results.
 
-## 🎯 Problem Statement
+### Project Identity
 
-Students often struggle to understand Data Structures and Algorithms because theoretical explanations and conventional code examples do not always make program execution easy to visualize.
-
-Common difficulties include:
-
-- Understanding how variables change during execution.
-- Following array operations and algorithm iterations.
-- Distinguishing between different data structures.
-- Understanding how data structures change after individual operations.
-- Identifying the behavior of loops and conditional statements.
-- Debugging Java programs and interpreting their execution.
-
-ALGOLAB addresses these challenges through interactive visualizations, executable Java examples, and step-by-step execution inspection.
-
-## 🎯 Project Objectives
-
-1. Provide an interactive environment for learning DSA.
-2. Visualize sorting and searching algorithms.
-3. Demonstrate fundamental data structures through interactive operations.
-4. Allow students to write and execute Java programs.
-5. Capture genuine program execution events for step-by-step inspection.
-6. Display variable and data-state information where supported by the tracer.
-7. Provide contextual explanations to improve conceptual understanding.
-8. Create a foundation for future practice problems, progress tracking, and personalized learning.
+| Attribute | Details |
+|---|---|
+| Project Name | ALGOLAB |
+| Full Title | Interactive Data Structures and Algorithm Visualization & Learning Platform |
+| Project Type | Web-Based Educational Application |
+| Domain | Computer Science Education |
+| Primary Language for Code Lab | Java |
+| Academic Program | B.Tech Computer Science and Engineering |
+| University | Rayat Bahra University |
 
 ---
 
-## ✨ Features
+## Problem Statement
 
-### 1. Algorithm Visualizer
+Students often face difficulties understanding Data Structures and Algorithms because:
 
-The Algorithm Visualizer helps students understand algorithm behavior through graphical representations and step-by-step interaction.
+- Algorithm execution is difficult to visualize mentally.
+- Loops and conditional statements can be challenging to trace.
+- Changes in array elements, pointers, and variables are not always obvious.
+- Static diagrams do not show every execution step.
+- Students may understand the theory but struggle to implement it in code.
+- Practicing programming problems does not always explain why a solution succeeds or fails.
 
-**Supported algorithms include:**
+ALGOLAB aims to reduce these difficulties by combining interactive visualization, program execution, execution tracing, and programming practice in one learning platform.
+
+---
+
+## Objectives
+
+The main objectives of ALGOLAB are:
+
+1. Develop an interactive platform for learning Data Structures and Algorithms.
+2. Visualize algorithm execution through meaningful state changes.
+3. Provide an environment for writing and running Java programs.
+4. Help students inspect variable values and program execution steps.
+5. Explain important operations during algorithm execution.
+6. Provide interactive labs for exploring common data structures.
+7. Offer programming practice with automated test-case evaluation.
+8. Support the persistence of relevant user information, submissions, and learning progress.
+9. Create a foundation for future educational features and additional algorithms.
+
+---
+
+## Key Features
+
+### 1. Interactive Dashboard and Navigation
+
+The application provides a shared navigation experience for accessing its learning modules.
+
+Features include:
+
+- Navigation between available learning modules.
+- Responsive interface for different screen sizes.
+- Sidebar navigation with toggle controls.
+- Access to the platform's main learning areas.
+
+### 2. Algorithm Visualizer
+
+The visualizer helps students understand how sorting and searching algorithms operate.
+
+Available algorithm implementations include:
 
 - Bubble Sort
 - Selection Sort
@@ -91,536 +118,635 @@ The Algorithm Visualizer helps students understand algorithm behavior through gr
 - Linear Search
 - Binary Search
 
-Features include algorithm selection, visual state changes, and interactive exploration where implemented.
+Depending on the selected visualizer, students can explore the algorithm's execution, observe changes in the data, and use the available playback controls.
 
-### 2. Code Lab — Java Programming
+### 3. Data Structure Labs
 
-Code Lab provides an environment for writing and executing Java programs.
+ALGOLAB includes interactive learning environments for common data structures.
 
-Key capabilities include:
+**Stack Lab**
+- Push and pop operations.
+- Stack state visualization.
+- Last-In, First-Out (LIFO) behavior.
+
+**Queue Lab**
+- Enqueue and dequeue operations.
+- Queue state visualization.
+- First-In, First-Out (FIFO) behavior.
+
+**Linked List Lab**
+- Linked list operations.
+- Node and pointer relationships.
+- Visualization of structural changes.
+
+**Tree Lab**
+- Binary Search Tree operations.
+- Insertion and deletion.
+- Tree traversal and structural visualization.
+
+The exact operations available depend on the individual lab implementation.
+
+### 4. Graph Lab
+
+The Graph Lab helps students understand graph traversal and shortest-path concepts.
+
+Supported graph algorithms include:
+
+- Breadth-First Search (BFS)
+- Depth-First Search (DFS)
+- Dijkstra's shortest-path algorithm
+
+The lab provides a visual environment for exploring graph structures, node visits, and algorithm behavior.
+
+### 5. Maze Lab
+
+Maze Lab demonstrates how search algorithms explore a grid to find a path between a starting point and a destination.
+
+Features include:
+
+- Maze generation.
+- Start and destination cells.
+- Grid-based pathfinding.
+- BFS visualization.
+- DFS visualization.
+- Animated exploration of visited cells and paths.
+
+Additional pathfinding algorithms can be incorporated as the project evolves.
+
+### 6. Java Code Lab
+
+The Code Lab is designed to help students connect Java source code with program execution.
+
+Its interface includes:
 
 - Java code editor.
-- Starter code templates for supported examples.
-- Code execution through the backend service.
-- Standard input and output handling where supported.
-- Compiler error reporting.
+- Java code templates.
+- Code execution controls.
+- Standard input area.
+- Console output.
 - Execution trace controls.
-- Variable and state inspection.
-- Step-by-step educational explanations.
+- Trace visualization.
+- Variable and program-state inspection.
+- Reset functionality.
 
-The execution and tracing workflow depends on the backend service being available.
+The execution environment uses a Node.js server and Docker-based Java runner. Java tracing uses the Java Debug Interface (JDI) to collect execution information for supported programs.
 
-### 3. Java Execution Tracing
+When the live execution environment is unavailable, the interface can use pre-recorded trace fixtures for demonstration where supported.
 
-ALGOLAB integrates Java execution with a tracing mechanism based on the **Java Debug Interface (JDI)**.
+**Important:** Real-time execution and tracing require the local backend and its Docker execution environment to be available.
 
-The tracing system captures execution events so students can inspect how their programs progress.
+### 7. Practice Arena
 
-Depending on the program and captured event, students can explore:
+Practice Arena provides a dedicated environment for solving programming problems.
 
-- Executed source lines.
-- Local variable values.
-- Array state snapshots.
-- Program output.
-- Execution errors and termination information.
+The current problem set includes:
 
-The captured trace is used by the frontend playback interface.
+- Reverse Array
+- Find Largest Element
+- Linear Search
+- Binary Search
+- Move Zeros to End
 
-**Important distinction:** The Code Lab trace represents captured Java execution events. High-level visualizer animations are separate and should not be interpreted as source-level debugging events.
+Features include:
 
-### 4. Stack Lab
+- Problem selection.
+- Starter code.
+- Editable solution code.
+- Sample test cases.
+- Hidden test cases.
+- Solution submission and evaluation.
+- Code reset functionality.
+- Independent drafts for different problems.
+- Transfer of code from Practice Arena to Code Lab.
 
-Stack Lab demonstrates the **Last In, First Out (LIFO)** principle.
+The evaluation result depends on the configured backend and execution environment.
 
-Implemented operations include:
+### 8. Authentication and Progress Persistence
 
-- Push
-- Pop
-- Peek
-- Clear
-- Playback controls
-- Step navigation
-- Speed control
-- Stack state inspection
+The backend supports application functionality for:
 
-The visualization illustrates how elements enter and leave a stack and how its state changes after operations.
+- Student registration and login.
+- Session management.
+- Submission persistence.
+- Problem progress persistence.
+- Lab-state persistence.
 
-### 5. Queue Lab
+These features use the configured backend and database. They require the appropriate local services and configuration.
 
-Queue Lab demonstrates the **First In, First Out (FIFO)** principle.
+### 9. Execution Status and Error Handling
 
-Implemented operations include:
+Practice Arena checks backend availability and displays a status indicator.
 
-- Enqueue
-- Dequeue
-- Peek / Front
-- Empty-queue checking
-- Size inspection
-- Clear
-- Reset and replay
-- Step-by-step playback
+The status can distinguish between conditions such as:
 
-The horizontal visualization identifies the front and rear of the queue and illustrates how elements are inserted and removed.
+- Checking availability.
+- Judge Online.
+- Backend Offline.
+- Judge Unavailable.
+- Backend Timeout.
+- Offline Mode.
 
-### 6. Maze Lab
-
-Maze Lab demonstrates pathfinding and traversal on a grid.
-
-Implemented capabilities include:
-
-- Maze generation using a recursive backtracking approach.
-- Breadth-First Search (BFS).
-- Depth-First Search (DFS).
-- Animated exploration.
-- Playback controls.
-
-BFS can find a shortest path in an unweighted grid when a path exists. DFS explores paths without generally guaranteeing the shortest route.
-
-### 7. Algorithm Explorer
-
-The Algorithm Explorer provides a central place to discover supported algorithms and data structures.
-
-It connects learning topics to their corresponding visualization modules where available.
+This helps students understand whether the execution service is available instead of assuming that code evaluation is always active.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Technology | Purpose |
 |---|---|
-| HTML5 | Webpage structure |
-| CSS3 | Layout, styling, and animations |
-| Vanilla JavaScript | Frontend logic and interactive visualizations |
-| Java | Programming language used in Code Lab |
-| Node.js | Backend API and execution orchestration |
+| HTML5 | Web page structure |
+| CSS3 | Styling, layouts, and responsive design |
+| Vanilla JavaScript | Frontend interactions and visualization logic |
+| Java | Student programs and Java execution tracing |
+| Node.js | Backend HTTP API and execution orchestration |
+| MySQL 8 | Persistent structured application data |
+| Docker | Isolated Java execution environment |
 | Java Debug Interface (JDI) | Java execution tracing |
-| Docker | Isolated execution environment for submitted Java programs |
-| npm | Backend scripts and test execution |
-| Git and GitHub | Version control and source-code hosting |
-| MySQL | Planned persistent data storage |
+| Git | Version control |
+| GitHub | Source code hosting |
+| VS Code | Development environment |
 
-The frontend uses vanilla JavaScript rather than a frontend framework.
+The frontend uses HTML, CSS, and vanilla JavaScript. The application does not require a React migration.
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
-ALGOLAB separates its visual learning interface from the Java execution service.
+ALGOLAB follows a layered architecture.
+
+### 1. Presentation Layer
+
+The presentation layer contains the user-facing web interface.
+
+Responsibilities:
+
+- Display learning modules.
+- Collect user input.
+- Render algorithm and data structure states.
+- Provide editor and playback controls.
+- Display execution output and evaluation results.
+
+**Technologies:** HTML, CSS, and vanilla JavaScript.
+
+### 2. Application and API Layer
+
+The backend provides application services and coordinates communication between the frontend, database, and execution runner.
+
+Responsibilities:
+
+- Handle API requests.
+- Manage authentication and sessions.
+- Process programming submissions.
+- Persist user data and learning progress.
+- Coordinate code execution.
+- Return execution results and status information.
+
+**Technology:** Node.js.
+
+### 3. Execution Layer
+
+The execution layer handles supported Java program compilation, execution, and tracing.
+
+Responsibilities:
+
+- Receive supported execution requests.
+- Compile and run Java programs.
+- Apply Docker-based execution isolation.
+- Collect tracing information through JDI.
+- Return output, errors, and trace data.
+
+**Technologies:** Java, Node.js, Docker, and JDI.
+
+### 4. Data Layer
+
+The data layer stores structured application information.
+
+The documented database entities include:
+
+- `users`
+- `sessions`
+- `submissions`
+- `problem_progress`
+- `lab_states`
+
+**Technology:** MySQL.
+
+### Architecture Flow
 
 ```text
-                    STUDENT
-                       |
-                       v
-              ALGOLAB FRONTEND
-             HTML / CSS / JavaScript
-                       |
-          +------------+-------------+
-          |            |             |
-          v            v             v
-    Algorithm       Data          Code Lab
-    Visualizers   Structures         |
-          |            |             v
-          |            |       Node.js HTTP API
-          |            |             |
-          |            |             v
-          |            |       Docker Runner
-          |            |             |
-          |            |             v
-          |            |       Java Execution
-          |            |             |
-          |            |             v
-          |            |        JDI Tracer
-          |            |             |
-          |            |             v
-          |            |       Execution Events
-          |            |             |
-          +------------+-------------+
-                       |
-                       v
-              VISUALIZATION &
-             EDUCATIONAL FEEDBACK
++---------------------------------------+
+|              Student                  |
++-------------------+-------------------+
+                    |
+                    v
++---------------------------------------+
+|           Frontend Interface          |
+|       HTML + CSS + JavaScript         |
+|                                       |
+| Visualizers | Code Lab | Practice     |
++-------------------+-------------------+
+                    |
+                    v
++---------------------------------------+
+|          Node.js Backend API          |
+|                                       |
+| Authentication | Submissions | State  |
++-----------+-------------------+-------+
+            |                   |
+            v                   v
++---------------------+  +---------------------+
+| Java Execution      |  | MySQL Database      |
+| Runner              |  |                     |
+|                     |  | Users and Sessions  |
+| Docker + Java + JDI |  | Progress and States |
++---------------------+  +---------------------+
+            |
+            v
++---------------------------------------+
+| Results, Output and Execution Trace    |
++---------------------------------------+
 ```
 
-The frontend handles visualizations and user interactions. The backend manages Java execution requests and communicates with the Docker-based runner.
-
-The tracing component captures execution events, which are returned to Code Lab for playback and inspection.
-
-**Database integration, persistent user accounts, and learning-progress storage are planned enhancements rather than completed features.**
-
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-The following represents the main project areas. Exact filenames may vary as development continues.
+The following is the logical structure of the main application components. Some files and folders may vary depending on the current development version.
 
 ```text
-ALGOLAB/
+ALGOLAB-frontend_3/
+│
+├── README.md
+├── .gitignore
+├── .env.example
 │
 ├── frontend/
 │   ├── index.html
-│   ├── visualizer.html
 │   ├── algorithms.html
-│   ├── maze.html
+│   ├── visualizer.html
 │   ├── codelab.html
-│   ├── stack.html
-│   ├── queue.html
+│   ├── practice.html
+│   ├── maze.html
+│   ├── graph.html
 │   │
 │   ├── css/
 │   │   └── style.css
 │   │
 │   └── js/
+│       ├── main.js
 │       ├── visualizer.js
 │       ├── codelab.js
-│       ├── stack.js
-│       ├── queue.js
-│       ├── playback-engine.js
-│       └── explanation-engine.js
+│       ├── practice.js
+│       └── maze.js
 │
 ├── backend/
 │   └── runner/
-│       ├── server.js
-│       ├── docker-runner.js
-│       ├── Dockerfile
 │       ├── package.json
+│       ├── .env.example
+│       ├── env.js
 │       └── tests/
 │
-├── .gitignore
-├── .gitattributes
-├── .env.example
-└── README.md
+└── docs/
+    ├── FINAL_PROJECT_REPORT.md
+    ├── TECHNICAL_DOCUMENTATION.md
+    ├── DATABASE_DOCUMENTATION.md
+    ├── API_DOCUMENTATION.md
+    ├── TESTING_REPORT.md
+    └── SETUP_GUIDE.md
 ```
 
-This is a representative structure, not a guarantee that every listed file is present in the latest commit.
+The structure above summarizes the principal components; it is not an exhaustive inventory of every source file.
 
 ---
 
-## 🚀 Getting Started
+## Installation and Setup
+
+The following instructions describe a local Windows development setup.
 
 ### Prerequisites
 
-Install the following software:
+Install or configure the following tools:
 
 - Git
 - Node.js and npm
 - Java Development Kit (JDK)
-- Docker Desktop with Docker Engine running
-- A modern web browser
+- Docker Desktop with a working Docker engine
+- MySQL Server 8
+- Visual Studio Code or another code editor
 
-The project has previously been developed and tested using Node.js 24.x and Java 25.x. Docker must be available for the containerized Java execution workflow.
+Verify that the required commands are available:
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Preetpal10/ALGOLab.git
-```
-
-Navigate to the project directory:
-
-```bash
-cd ALGOLab
-```
-
-### 2. Verify the Development Environment
-
-Check Node.js:
-
-```bash
+```powershell
+git --version
 node --version
 npm --version
-```
-
-Check Java:
-
-```bash
 java -version
 javac -version
-```
-
-Check Docker:
-
-```bash
 docker --version
 docker info
 ```
 
-Docker must be running before attempting containerized Java execution.
+The Docker engine must be running for live sandboxed Java execution.
 
-### 3. Install Backend Dependencies
+### Step 1: Clone the Repository
 
-Navigate to the backend runner:
+```powershell
+git clone https://github.com/Preetpal10/ALGOLab.git
+cd ALGOLab
+```
 
-```bash
+If you already have the project locally, open the existing project directory instead of cloning it again.
+
+### Step 2: Configure the Backend
+
+Navigate to the backend runner directory:
+
+```powershell
 cd backend/runner
+```
+
+Create your local environment configuration from the example file:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Open `.env` and enter the correct local configuration values.
+
+Depending on the existing configuration, these may include:
+
+- MySQL host and port.
+- Application database name.
+- Application database username.
+- Application database password.
+- Session secret.
+- Backend port.
+- Java and Docker runner settings.
+
+Use the variable names already defined in `backend/runner/.env.example`. Do not invent variable names or share real credentials.
+
+**Security note:** Keep `.env` files private. Never commit database passwords, session secrets, or other credentials to GitHub.
+
+### Step 3: Install Backend Dependencies
+
+From `backend/runner`, run:
+
+```powershell
 npm install
 ```
 
-Return to the project root when needed:
+### Step 4: Configure MySQL
 
-```bash
-cd ../..
+Ensure that MySQL Server is running.
+
+Create and configure the application database and its application user according to your project's database setup instructions.
+
+Use the SQL schema, migration scripts, and configuration documented in the project. Avoid modifying unrelated databases or existing user records.
+
+If the project provides database initialization or migration commands, follow the documented commands before starting the backend.
+
+### Step 5: Start Docker Desktop
+
+Start Docker Desktop and confirm that the Docker engine is available:
+
+```powershell
+docker info
 ```
 
-The frontend consists of static HTML, CSS, and JavaScript files and does not require a frontend build step in its current architecture.
+If Docker is unavailable, the application may still open, but live sandboxed Java execution and judging may not work.
 
 ---
 
-## 💻 Running the Application
+## Running the Application
 
-### 1. Start the Java Execution Backend
+Start the backend and frontend in separate terminals.
 
-Open a terminal in the project root:
+### Terminal 1: Start the Backend
 
-```bash
-cd backend/runner
+```powershell
+cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3\backend\runner"
 npm start
 ```
 
-Keep this terminal open while testing Code Lab.
+The backend is configured to use port `3001` in the documented local setup.
 
-The server's default host and port should be confirmed in the current `backend/runner/server.js` configuration. Previous development configuration used `127.0.0.1:3001`.
+Check the health endpoint:
 
-### 2. Check Backend Health
+```text
+http://127.0.0.1:3001/api/health
+```
 
-If the server uses the default local configuration, run this command in another terminal.
+A successful health response indicates that the backend is reachable. Live judging also depends on the execution runner and Docker being available.
 
-**PowerShell:**
+### Terminal 2: Start the Frontend
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3001/api/health
+cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3"
+npx serve -l 8000 frontend
 ```
 
-A successful health response indicates that the HTTP API is reachable. It does not, by itself, prove that Java execution and tracing work end to end.
+Open the application in your browser:
 
-### 3. Serve the Frontend
+**Main application:**
 
-From the project root, open another terminal:
+http://localhost:8000
 
-```bash
-npx serve frontend -l 8000
-```
+**Code Lab:**
 
-Open the website in your browser.
-
-**Homepage**
-
-```text
-http://localhost:8000/
-```
-
-**Code Lab**
-
-```text
 http://localhost:8000/codelab.html
-```
 
-**Algorithm Explorer**
+**Practice Arena:**
 
-```text
-http://localhost:8000/algorithms.html
-```
+http://localhost:8000/practice.html
 
-**Maze Lab**
+**Graph Lab:**
 
-```text
+http://localhost:8000/graph.html
+
+**Maze Lab:**
+
 http://localhost:8000/maze.html
-```
 
-**Stack Lab**
-
-```text
-http://localhost:8000/stack.html
-```
-
-**Queue Lab**
-
-```text
-http://localhost:8000/queue.html
-```
-
-If a route or filename differs in your latest repository, use the actual filename.
+If your project is located in a different directory, update the commands accordingly.
 
 ---
 
-## ☕ Java Code Execution and Tracing
+## Testing
 
-Code Lab is designed to connect Java source code with actual execution events.
+ALGOLAB includes automated tests for important frontend logic, backend services, algorithm implementations, execution tracing, and integration behavior.
 
-The intended workflow is:
+The documented test coverage includes areas such as:
 
-1. The student writes or selects a Java program.
-2. The frontend submits the program to the backend API.
-3. The backend passes the request to the Docker execution runner.
-4. The Java program is compiled and executed in the container.
-5. The tracing component captures execution events.
-6. The backend returns the execution results and trace data.
-7. The frontend displays the output and allows the student to inspect the trace.
+- Authentication and session handling.
+- Submission persistence.
+- Lab-state persistence.
+- Code draft persistence.
+- Practice Arena reset behavior.
+- Practice-to-Code Lab code transfer.
+- Sorting and searching algorithms.
+- Stack and queue operations.
+- Linked list operations.
+- Binary Search Tree operations.
+- Graph traversal and shortest paths.
+- Execution tracing and playback.
+- Backend API behavior.
+- Frontend integration.
+- Docker runner behavior.
 
-The execution service must be running for the complete workflow to function in a local development environment.
+### Run the Automated Tests
 
-### Execution Security
+Navigate to the backend runner directory:
 
-The runner uses Docker to isolate Java execution from the Node.js application process. Container resource limits and restricted execution settings are important because student-submitted code is untrusted.
+```powershell
+cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3\backend\runner"
+```
 
-The current project is a development-stage learning platform. Its execution environment should not be assumed to provide production-grade security for arbitrary public submissions without further security review.
+Run the test commands defined in the project's `package.json`.
+
+For example, if the corresponding script exists:
+
+```powershell
+npm run test:integration
+```
+
+To inspect the available test scripts:
+
+```powershell
+npm run
+```
+
+The project audit report for Phase 18B records **422 tests passed, 0 failed, and 0 skipped across 24 test suites**.
+
+These figures represent the documented results of that audit. Run the tests again against the current checkout to establish the result for your own environment.
+
+For the detailed test inventory, methodology, and reported results, see `docs/TESTING_REPORT.md`.
 
 ---
 
-## 🧪 Automated Testing
+## Database Overview
 
-ALGOLAB uses Node.js automated tests to validate the tracing pipeline, visualizer logic, and data-structure behavior.
+The backend uses MySQL for persistent structured data.
 
-The Phase 10.2 development report recorded the following test results:
+The documented database entities include:
 
-| Test Suite | Reported Result |
-|---|---:|
-| Queue Lab | 30/30 |
-| Stack Lab | 22/22 |
-| Routing and bug fixes | 41/41 |
-| Educational explanations | 14/14 |
-| Playback engine | 13/13 |
-| Linear Search | 18/18 |
-| Binary Search | 20/20 |
-| **Total** | **158/158** |
+| Table | Purpose |
+|---|---|
+| `users` | Student account information |
+| `sessions` | Application session records |
+| `submissions` | Programming submission records |
+| `problem_progress` | Problem-solving progress |
+| `lab_states` | Persisted state for supported learning labs |
 
-These are results reported in the Phase 10.2 development report. They should be rerun against the current checkout before being presented as independently verified results.
+The exact schema, keys, constraints, and relationships are documented in:
 
-To run the Queue Lab tests:
+`docs/DATABASE_DOCUMENTATION.md`
 
-```bash
-cd backend/runner
-npm run test:queue
-```
-
-To run the Stack Lab tests:
-
-```bash
-npm run test:stack
-```
-
-To run the routing and playback regression tests:
-
-```bash
-npm run test:bugfix
-```
-
-To run the playback tests:
-
-```bash
-npm run test:playback
-```
-
-To run the educational explanation tests:
-
-```bash
-npm run test:explanation
-```
-
-To run the search tests:
-
-```bash
-npm run test:linear
-npm run test:binary
-```
-
-The available test scripts can change during development. Check `backend/runner/package.json` for the commands supported by the current version.
-
-Automated tests and manual browser testing are separate. A passing unit test does not necessarily prove that every interface works correctly in a browser.
+Database initialization and local configuration should follow the project's schema and setup instructions.
 
 ---
 
-## ⚠️ Current Limitations
+## Security Considerations
 
-ALGOLAB is actively under development.
+Security is important because the platform supports user accounts and student-submitted code.
 
-The current implementation has the following known scope boundaries:
+The application design includes the following considerations:
 
-- MySQL integration and persistent application data are planned.
-- Authentication and student accounts are planned.
-- Persistent learning progress and saved results are planned.
-- Practice Arena and comprehensive automated solution judging are planned.
-- Queue Lab and other interactive visualizers should be manually tested in the browser before release.
-- Public Java execution requires a properly deployed and security-reviewed backend.
-- The development execution environment should not be treated as a production multi-tenant sandbox.
+- Keep credentials in environment files rather than frontend JavaScript.
+- Exclude secret-bearing `.env` files from version control.
+- Use an application-specific database account with appropriate permissions.
+- Store passwords using a password-hashing mechanism.
+- Manage authenticated sessions through the backend.
+- Execute supported Java programs in a Docker-based isolated environment.
+- Apply resource limits to code execution.
+- Avoid granting the execution container unnecessary privileges.
+- Keep the database and execution services separate from the public frontend.
 
-Some functionality is available locally but may not work on a static public deployment if it depends on the local backend.
+Docker-based execution is intended to reduce the risks of running student code. It should not be treated as a guarantee of complete security.
 
----
-
-## 🔮 Future Enhancements
-
-The following features are candidates for future development.
-
-### Data Structures
-
-- Linked List Lab.
-- Additional queue implementations.
-- More advanced data-structure visualizations.
-
-### Practice Arena
-
-- DSA problem catalog.
-- Problem descriptions and constraints.
-- Sample input and output.
-- Test-case evaluation.
-- Submission results and feedback.
-
-### Database Integration
-
-- MySQL database design.
-- Persistent problem and test-case storage.
-- Saved user data.
-- Learning-progress records.
-
-### Authentication and Progress
-
-- Student registration and login.
-- User profiles.
-- Progress tracking.
-- Bookmarked algorithms.
-- Completed problem history.
-
-### Learning Experience
-
-- Additional algorithm explanations.
-- More Java starter templates.
-- Improved execution tracing.
-- Expanded algorithm coverage.
-- Better mobile usability.
-
-These are planned enhancements, not claims about existing functionality.
+Before exposing the execution service to the public internet, review its authentication, rate limits, resource restrictions, network isolation, logging, and operational monitoring.
 
 ---
 
-## 🤝 Contributing
+## Current Limitations
 
-ALGOLAB is an educational project developed to explore interactive algorithm learning, Java execution tracing, and data-structure visualization.
+The following limitations should be considered when running or evaluating ALGOLAB:
 
-Suggestions and improvements are welcome.
+1. **Java-focused execution:** The Code Lab and Practice Arena currently focus on Java execution and tracing.
+2. **Docker dependency:** Real-time sandboxed execution requires a working local Docker environment.
+3. **Offline demonstration:** Pre-recorded trace fixtures may be used where supported when live execution is unavailable.
+4. **Algorithm coverage:** Not every possible algorithm or data structure is implemented.
+5. **State inspection limits:** Large or deeply nested collections may be subject to inspection limits.
+6. **Environment configuration:** Authentication, persistence, and execution depend on the backend, MySQL, and required configuration being available.
 
-When proposing changes:
-
-1. Preserve the existing HTML, CSS, and vanilla JavaScript architecture.
-2. Test changes against existing functionality.
-3. Avoid introducing unnecessary dependencies.
-4. Keep execution and tracing results truthful.
-5. Document significant architectural changes.
-
----
-
-## 👨‍💻 Author
-
-Preetpal Singh
-B.Tech — Computer Science & Engineering
-
-**Project:** ALGOLAB — Interactive Data Structures & Algorithms Learning Platform
-
-**GitHub:** https://github.com/Preetpal10
+The availability of individual features depends on the current implementation and local environment.
 
 ---
 
+## Future Scope
 
-## 📄 License
+Potential future improvements include:
 
-The project's license has not yet been specified.
+- Support for additional programming languages.
+- More algorithms and data structures.
+- Additional graph and pathfinding algorithms.
+- More practice problems and structured difficulty levels.
+- Improved explanations for complex execution steps.
+- Enhanced learning progress dashboards.
+- Additional performance and complexity comparisons.
+- Expanded test coverage and accessibility improvements.
+- Improved deployment and operational monitoring.
+- Additional learning resources and guided exercises.
 
-A suitable open-source license can be added after deciding how the project may be used, modified, and distributed.
+These items describe possible future development and should not be interpreted as completed features.
+
+---
+
+## Academic Information
+
+**Project Title:** ALGOLAB — Interactive Data Structures and Algorithm Visualization & Learning Platform
+
+**Degree:** Bachelor of Technology (B.Tech)
+
+**Branch:** Computer Science and Engineering
+
+**University:** Rayat Bahra University
+
+**Student Name:** Preetpal Singh
+
+
+
+
+---
+
+## Contributing
+
+Contributions that improve the platform's educational value, correctness, usability, or reliability are welcome.
+
+A suggested contribution workflow is:
+
+1. Review the existing implementation.
+2. Identify a focused improvement or bug.
+3. Create a separate Git branch.
+4. Implement and test the change.
+5. Verify that existing features remain functional.
+6. Submit the changes for review.
+
+Avoid committing secrets, local environment files, generated credentials, or private development prompts.
+
+---
+
+## License
+
+No license has been specified in this README.
+
+Before distributing or reusing the project, choose and add an appropriate license file if required. Until a license is added, do not assume that the repository grants permission for unrestricted reuse.
+
+---
+
+## Acknowledgment
+
+ALGOLAB is an academic software project developed to support the learning of Data Structures and Algorithms through interactive visualization, code execution, and programming practice.
+
+The project demonstrates the application of frontend development, backend programming, database design, algorithm implementation, execution tracing, and software testing to an educational problem.
+
+**ALGOLAB — Understand the Logic. Visualize the Execution. Master the Algorithm.**

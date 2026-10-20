@@ -10,27 +10,158 @@
 
 <body>
 
-  <!-- ===================== NAVBAR ===================== -->
-  <header class="navbar">
-    <div class="container">
-      <div class="logo">ALGO<span>LAB</span></div>
-      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="codelab.html">Code Lab</a></li>
-        <li><a href="algorithms.html">Algorithms</a></li>
-        <li><a href="visualizer.html">Visualizer</a></li>
-        <li><a href="stack.html">Stack Lab</a></li>
-        <li><a href="queue.html">Queue Lab</a></li>
-        <li><a href="linkedlist.html" class="active">Linked List Lab</a></li>
-        <li><a href="tree.html">Tree Lab</a></li>
-        <li><a href="maze.html">Maze Lab</a></li>
-        <li><a href="index.html#about">About</a></li>
-      </ul>
+<div class="app-container">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">ALGO<span class="brand-highlight">LAB</span></span>
+      </a>
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">&times;</button>
     </div>
-  </header>
+
+    <div class="sidebar-badge-wrap">
+      <span class="sidebar-pill">B.Tech DSA Platform</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main Navigation">
+      <ul class="nav-sections-list" id="nav-links">
+        
+        <!-- MAIN -->
+        <li class="nav-section-header">MAIN</li>
+        <li>
+          <a href="index.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="dashboard.html" class="nav-link">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- CODING -->
+        <li class="nav-section-header">CODING</li>
+        <li>
+          <a href="codelab.html" class="nav-link">
+            <span class="nav-icon">💻</span>
+            <span class="nav-text">Code Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="practice.html" class="nav-link">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-text">Practice Arena</span>
+          </a>
+        </li>
+
+        <!-- ALGORITHMS -->
+        <li class="nav-section-header">ALGORITHMS</li>
+        <li>
+          <a href="algorithms.html" class="nav-link">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">Algorithm Library</span>
+          </a>
+        </li>
+        <li>
+          <a href="visualizer.html" class="nav-link">
+            <span class="nav-icon">🔄</span>
+            <span class="nav-text">Visualizer</span>
+          </a>
+        </li>
+
+        <!-- DATA STRUCTURES -->
+        <li class="nav-section-header">DATA STRUCTURES</li>
+        <li>
+          <a href="stack.html" class="nav-link">
+            <span class="nav-icon">🥞</span>
+            <span class="nav-text">Stack Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="queue.html" class="nav-link">
+            <span class="nav-icon">🚶</span>
+            <span class="nav-text">Queue Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="linkedlist.html" class="nav-link active">
+            <span class="nav-icon">🔗</span>
+            <span class="nav-text">Linked List Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="tree.html" class="nav-link">
+            <span class="nav-icon">🌳</span>
+            <span class="nav-text">Tree Lab</span>
+          </a>
+        </li>
+
+        <!-- ADVANCED LABS -->
+        <li class="nav-section-header">ADVANCED LABS</li>
+        <li>
+          <a href="graph.html" class="nav-link">
+            <span class="nav-icon">🕸️</span>
+            <span class="nav-text">Graph Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="maze.html" class="nav-link">
+            <span class="nav-icon">🧩</span>
+            <span class="nav-text">Maze Lab</span>
+          </a>
+        </li>
+
+        <!-- ACCOUNT -->
+        <li class="nav-section-header">ACCOUNT</li>
+        <li id="nav-auth-slot">
+          <a href="login.html" class="nav-link">
+            <span class="nav-icon">🔑</span>
+            <span class="nav-text">Login</span>
+          </a>
+          <a href="register.html" class="nav-link">
+            <span class="nav-icon">✨</span>
+            <span class="nav-text">Register</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-status-pill">
+        <span class="pulse-indicator"></span>
+        <span class="status-label">System Ready</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Main Content Layout -->
+  <div class="app-main">
+    <!-- Top Navigation Bar -->
+    <header class="app-topbar mobile-topbar">
+      <div class="topbar-left">
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="app-sidebar">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="topbar-brand">
+          <span>ALGO<span class="brand-highlight">LAB</span></span>
+        </a>
+      </div>
+      <nav class="topbar-links" aria-label="Quick Navigation">
+        <a href="index.html" class="topbar-link">Home</a>
+        <a href="dashboard.html" class="topbar-link">Dashboard</a>
+        <a href="index.html#about" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-right" id="mobile-auth-widget"></div>
+    </header>
+
 
   <!-- ===================== PAGE HEADER ===================== -->
   <section class="hero" style="padding: 40px 0 10px;">
@@ -170,9 +301,12 @@
       <p>&copy; 2026 ALGOLAB. Educational Data Structures &amp; Algorithms Platform.</p>
     </div>
   </footer>
+  </div>
+</div>
 
   <script src="js/main.js"></script>
   <script type="module" src="js/linkedlist.js"></script>
+  <script type="module" src="js/auth-nav.js"></script>
 </body>
 
 </html>

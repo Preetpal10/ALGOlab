@@ -405,13 +405,14 @@ describe('Linked List Educational Explanation Rules (Phase 10.3)', () => {
 
 describe('Linked List Docker Execution Integration (Phase 10.3)', () => {
 
-  test('34. LinkedListDemo.java runs in isolated Docker container and returns genuine JDI trace', async () => {
+  test('34. LinkedListDemo.java runs in isolated Docker container and returns genuine JDI trace', { timeout: 35_000 }, async () => {
     assert.ok(fs.existsSync(LINKED_LIST_DEMO_FIXTURE), 'LinkedListDemo.java fixture must exist');
     const javaSource = fs.readFileSync(LINKED_LIST_DEMO_FIXTURE, 'utf-8');
 
     const result = await runInContainer({
       code: javaSource,
-      mainClass: 'LinkedListDemo'
+      mainClass: 'LinkedListDemo',
+      limits: { timeoutMs: 25_000 }
     });
 
     assert.equal(result.outcome, 'success', `Run failed: ${result.stderr}`);

@@ -9,6 +9,36 @@
 // and SVG Tree Rendering.
 // =============================================================================
 
+export const TREE_STORAGE_KEY = 'algolab_tree_state';
+
+/**
+ * Persists BST node values to web storage.
+ */
+export function saveTreeState(storage, state) {
+  try {
+    if (!storage || !state) return false;
+    storage.setItem(TREE_STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (err) {
+    console.warn('Failed to save tree state:', err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved BST node values from web storage.
+ */
+export function loadTreeState(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(TREE_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * Core Binary Search Tree Engine.
  * Operates purely on immutable state snapshots with stable node identities.
@@ -879,8 +909,19 @@ if (typeof document !== 'undefined') {
     const explanationWhy = document.getElementById('explanation-why');
     const explanationSummary = document.getElementById('explanation-summary');
 
-    // Initialize Tree Engine with default Balanced BST scenario
-    let tree = new TreeEngine([50, 30, 70, 20, 40, 60, 80]);
+    // Initialize Tree Engine with saved values or default balanced BST
+    const savedState = loadTreeState(typeof window !== 'undefined' ? window.localStorage : null);
+    const initialValues = (savedState && Array.isArray(savedState.values)) ? savedState.values : [50, 30, 70, 20, 40, 60, 80];
+    let tree = new TreeEngine(initialValues);
+
+    function persistCurrentTree() {
+      const values = Array.from(tree.nodes.values()).map(n => n.val);
+      const state = {
+        values,
+        timestamp: Date.now()
+      };
+      saveTreeState(typeof window !== 'undefined' ? window.localStorage : null, state);
+    }
 
     // Playback timer & sequence token
     let isPlaying = false;
@@ -1144,6 +1185,7 @@ if (typeof document !== 'undefined') {
         if (!isNaN(val)) {
           const step = tree.insert(val);
           renderStep(step);
+          persistCurrentTree();
         }
       });
     }
@@ -1155,6 +1197,7 @@ if (typeof document !== 'undefined') {
         if (!isNaN(val)) {
           const step = tree.delete(val);
           renderStep(step);
+          persistCurrentTree();
         }
       });
     }
@@ -1207,6 +1250,7 @@ if (typeof document !== 'undefined') {
         stopPlayback();
         const step = tree.clear();
         renderStep(step);
+        persistCurrentTree();
       });
     }
 
@@ -1228,6 +1272,7 @@ if (typeof document !== 'undefined') {
         } else if (scenario === 'custom') {
           tree = new TreeEngine([]);
         }
+        persistCurrentTree();
         renderStep(tree.history[tree.currentHistoryIndex]);
       });
     }

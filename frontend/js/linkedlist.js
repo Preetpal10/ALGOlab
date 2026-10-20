@@ -8,6 +8,36 @@
 // and Transparent Educational State Explanations.
 // =============================================================================
 
+export const LINKEDLIST_STORAGE_KEY = 'algolab_linkedlist_state';
+
+/**
+ * Persists linked list values to web storage.
+ */
+export function saveLinkedListState(storage, state) {
+  try {
+    if (!storage || !state) return false;
+    storage.setItem(LINKEDLIST_STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (err) {
+    console.warn('Failed to save linked list state:', err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved linked list values from web storage.
+ */
+export function loadLinkedListState(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(LINKEDLIST_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * Core Singly Linked List Data Structure Engine.
  * Operates purely on state snapshots with stable node identities.
@@ -888,8 +918,19 @@ if (typeof document !== 'undefined') {
     const explanationWhy = document.getElementById('explanation-why');
     const explanationSummary = document.getElementById('explanation-summary');
 
-    // Initialize Linked List Engine
-    const ll = new LinkedListEngine();
+    // Initialize Linked List Engine with saved elements if present
+    const savedState = loadLinkedListState(typeof window !== 'undefined' ? window.localStorage : null);
+    const initialElements = (savedState && Array.isArray(savedState.elements)) ? savedState.elements : [10, 20, 30];
+    const ll = new LinkedListEngine(initialElements);
+
+    function persistCurrentLinkedList() {
+      const step = ll.getCurrentStep();
+      const state = {
+        elements: step ? [...(step.values || [])] : [],
+        timestamp: Date.now()
+      };
+      saveLinkedListState(typeof window !== 'undefined' ? window.localStorage : null, state);
+    }
 
     // Auto-play interval state & generation token
     let isPlaying = false;
@@ -1146,6 +1187,7 @@ if (typeof document !== 'undefined') {
         }
         const step = ll.insertHead(val);
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1159,6 +1201,7 @@ if (typeof document !== 'undefined') {
         }
         const step = ll.insertTail(val);
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1173,6 +1216,7 @@ if (typeof document !== 'undefined') {
         const pos = getInputPos();
         const step = ll.insertAt(val, pos);
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1186,6 +1230,7 @@ if (typeof document !== 'undefined') {
         }
         const step = ll.deleteValue(val);
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1195,6 +1240,7 @@ if (typeof document !== 'undefined') {
         const pos = getInputPos();
         const step = ll.deleteAt(pos);
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1224,6 +1270,7 @@ if (typeof document !== 'undefined') {
         pause();
         const step = ll.reverse();
         renderStep(step);
+        persistCurrentLinkedList();
       });
     }
 
@@ -1232,6 +1279,7 @@ if (typeof document !== 'undefined') {
         pause();
         ll.resetSequence([]);
         renderStep(ll.getCurrentStep());
+        persistCurrentLinkedList();
       });
     }
 

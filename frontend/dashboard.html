@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Learning Dashboard - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .dashboard-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    }
+    .stat-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      line-height: 1.2;
+    }
+    .stat-subtext {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .topic-progress-bar-bg {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .topic-progress-bar-fill {
+      background: linear-gradient(90deg, #2563eb, #3b82f6);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8fafc;
+      padding: 12px 14px;
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 1px solid var(--color-border);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--color-text);
+      vertical-align: middle;
+    }
+    .data-table tr:hover {
+      background: #f8fafc;
+    }
+    .code-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .code-modal {
+      background: #ffffff;
+      width: 90%;
+      max-width: 760px;
+      max-height: 85vh;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app-container">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">ALGO<span class="brand-highlight">LAB</span></span>
+      </a>
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">&times;</button>
+    </div>
+
+    <div class="sidebar-badge-wrap">
+      <span class="sidebar-pill">B.Tech DSA Platform</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main Navigation">
+      <ul class="nav-sections-list" id="nav-links">
+        
+        <!-- MAIN -->
+        <li class="nav-section-header">MAIN</li>
+        <li>
+          <a href="index.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="dashboard.html" class="nav-link active">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- CODING -->
+        <li class="nav-section-header">CODING</li>
+        <li>
+          <a href="codelab.html" class="nav-link">
+            <span class="nav-icon">💻</span>
+            <span class="nav-text">Code Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="practice.html" class="nav-link">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-text">Practice Arena</span>
+          </a>
+        </li>
+
+        <!-- ALGORITHMS -->
+        <li class="nav-section-header">ALGORITHMS</li>
+        <li>
+          <a href="algorithms.html" class="nav-link">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">Algorithm Library</span>
+          </a>
+        </li>
+        <li>
+          <a href="visualizer.html" class="nav-link">
+            <span class="nav-icon">🔄</span>
+            <span class="nav-text">Visualizer</span>
+          </a>
+        </li>
+
+        <!-- DATA STRUCTURES -->
+        <li class="nav-section-header">DATA STRUCTURES</li>
+        <li>
+          <a href="stack.html" class="nav-link">
+            <span class="nav-icon">🥞</span>
+            <span class="nav-text">Stack Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="queue.html" class="nav-link">
+            <span class="nav-icon">🚶</span>
+            <span class="nav-text">Queue Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="linkedlist.html" class="nav-link">
+            <span class="nav-icon">🔗</span>
+            <span class="nav-text">Linked List Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="tree.html" class="nav-link">
+            <span class="nav-icon">🌳</span>
+            <span class="nav-text">Tree Lab</span>
+          </a>
+        </li>
+
+        <!-- ADVANCED LABS -->
+        <li class="nav-section-header">ADVANCED LABS</li>
+        <li>
+          <a href="graph.html" class="nav-link">
+            <span class="nav-icon">🕸️</span>
+            <span class="nav-text">Graph Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="maze.html" class="nav-link">
+            <span class="nav-icon">🧩</span>
+            <span class="nav-text">Maze Lab</span>
+          </a>
+        </li>
+
+        <!-- ACCOUNT -->
+        <li class="nav-section-header">ACCOUNT</li>
+        <li id="nav-auth-slot">
+          <a href="login.html" class="nav-link">
+            <span class="nav-icon">🔑</span>
+            <span class="nav-text">Login</span>
+          </a>
+          <a href="register.html" class="nav-link">
+            <span class="nav-icon">✨</span>
+            <span class="nav-text">Register</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-status-pill">
+        <span class="pulse-indicator"></span>
+        <span class="status-label">System Ready</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Main Content Layout -->
+  <div class="app-main">
+    <!-- Top Navigation Bar -->
+    <header class="app-topbar mobile-topbar">
+      <div class="topbar-left">
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="app-sidebar">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="topbar-brand">
+          <span>ALGO<span class="brand-highlight">LAB</span></span>
+        </a>
+      </div>
+      <nav class="topbar-links" aria-label="Quick Navigation">
+        <a href="index.html" class="topbar-link">Home</a>
+        <a href="dashboard.html" class="topbar-link active">Dashboard</a>
+        <a href="index.html#about" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-right" id="mobile-auth-widget"></div>
+    </header>
+
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 36px 0 16px;">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 style="margin: 0; font-size: 1.8rem;">Student <span class="highlight">Dashboard</span></h1>
+          <p id="student-profile-sub" style="margin: 4px 0 0; font-size: 0.95rem; color: var(--color-text-light);">
+            Loading student profile...
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="practice.html" class="btn btn-primary" style="font-size: 0.85rem; padding: 8px 16px;">
+            Go to Practice Arena &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DASHBOARD CONTENT ===================== -->
+  <section class="section" style="padding-top: 16px;">
+    <div class="container">
+
+      <!-- Status / Notification Alert -->
+      <div id="dash-alert" style="display: none; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;" role="alert"></div>
+
+      <!-- Loading State Container -->
+      <div id="dash-loading" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 1.1rem; color: var(--color-text-light);">Loading your learning data from database...</div>
+      </div>
+
+      <!-- Main Loaded Content -->
+      <div id="dash-content" style="display: none;">
+
+        <!-- 1. Learning Statistics Cards -->
+        <div class="dashboard-stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Problems Solved</div>
+            <div class="stat-value" id="stat-solved" style="color: #16a34a;">0</div>
+            <div class="stat-subtext" id="stat-solved-sub">0% of catalog completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Problems Attempted</div>
+            <div class="stat-value" id="stat-attempted" style="color: #2563eb;">0</div>
+            <div class="stat-subtext">Unique problems tried</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Total Submissions</div>
+            <div class="stat-value" id="stat-submissions" style="color: #475569;">0</div>
+            <div class="stat-subtext">Evaluated attempts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Acceptance Rate</div>
+            <div class="stat-value" id="stat-acceptance" style="color: #d97706;">0%</div>
+            <div class="stat-subtext">Accepted / Total submissions</div>
+          </div>
+        </div>
+
+        <!-- 2. Topic-Wise Breakdown -->
+        <div class="panel" style="margin-bottom: 24px; padding: 20px;">
+          <h3 style="margin: 0 0 14px; font-size: 1.05rem; color: var(--color-primary-dark);">Topic Mastery</h3>
+          <div id="topic-progress-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- 3. Recent Submissions Section -->
+        <div class="panel" style="margin-bottom: 24px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h3 style="margin: 0; font-size: 1.05rem; color: var(--color-primary-dark);">Recent Submissions</h3>
+            <span style="font-size: 0.8rem; color: var(--color-text-light);">Latest authoritative server verdicts</span>
+          </div>
+
+          <div id="submissions-table-wrap" class="table-container">
+            <table class="data-table" aria-label="Recent submissions">
+              <thead>
+                <tr>
+                  <th>Submission ID</th>
+                  <th>Problem</th>
+                  <th>Verdict</th>
+                  <th>Tests Passed</th>
+                  <th>Execution Time</th>
+                  <th>Submitted At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="submissions-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <div id="submissions-empty" style="display: none; text-align: center; padding: 36px 20px; color: var(--color-text-light);">
+            <p style="margin: 0 0 10px; font-size: 0.95rem;">No submissions recorded yet.</p>
+            <a href="practice.html" class="btn btn-primary" style="font-size: 0.82rem; padding: 6px 14px;">Solve a problem in Practice Arena</a>
+          </div>
+        </div>
+
+        <!-- 4. Problem Progress Overview (Solved vs Unsolved) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="progress-split-grid">
+          <!-- Solved Problems List -->
+          <div class="panel" style="padding: 20px;">
+            <h3 style="margin: 0 0 12px; font-size: 1rem; color: #166534; display: flex; align-items: center; gap: 6px;">
+              <span>✅</span> Solved Problems (<span id="count-solved-tab">0</span>)
+            </h3>
+            <div id="solved-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Populated -->
+            </div>
+            <div id="solved-empty" style="text-align: center; padding: 24px 10px; color: var(--color-text-light); font-size: 0.85rem;">
+              No problems solved yet. Keep practicing!
+            </div>
+          </div>
+
+          <!-- In-Progress / Attempted List -->
+          <div class="panel" style="padding: 20px;">
+            <h3 style="margin: 0 0 12px; font-size: 1rem; color: #b45309; display: flex; align-items: center; gap: 6px;">
+              <span>⏳</span> In Progress / Attempted (<span id="count-attempted-tab">0</span>)
+            </h3>
+            <div id="attempted-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Populated -->
+            </div>
+            <div id="attempted-empty" style="text-align: center; padding: 24px 10px; color: var(--color-text-light); font-size: 0.85rem;">
+              No unsolved attempts recorded.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== CODE VIEW MODAL ===================== -->
+  <div id="code-modal" class="code-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="code-modal">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--color-border); background: #f8fafc;">
+        <div>
+          <h4 id="modal-title" style="margin: 0; font-size: 1rem; color: var(--color-primary-dark);">Submitted Java Code</h4>
+          <span id="modal-subtext" style="font-size: 0.78rem; color: var(--color-text-light);">Loading details...</span>
+        </div>
+        <button id="modal-close-btn" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.85rem;" aria-label="Close modal">&times;</button>
+      </div>
+      <div style="padding: 16px; overflow-y: auto; flex: 1; background: #0f172a;">
+        <pre id="modal-code" style="margin: 0; color: #f8fafc; font-family: Consolas, monospace; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap;"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Interactive Data Structures &amp; Algorithms Platform.</p>
+    </div>
+  </footer>
+  </div>
+</div>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/auth-nav.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+
+</html>

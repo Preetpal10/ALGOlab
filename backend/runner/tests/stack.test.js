@@ -293,13 +293,14 @@ describe('Stack Educational Explanation Rules (Phase 10.1)', () => {
 
 describe('Stack Docker Execution Integration (Phase 10.1)', () => {
 
-  test('21. Stack Java code runs in isolated Docker container and returns genuine JDI trace', async () => {
+  test('21. Stack Java code runs in isolated Docker container and returns genuine JDI trace', { timeout: 35_000 }, async () => {
     assert.ok(fs.existsSync(STACK_DEMO_FIXTURE), 'StackDemo.java fixture must exist');
     const javaSource = fs.readFileSync(STACK_DEMO_FIXTURE, 'utf-8');
 
     const result = await runInContainer({
       code: javaSource,
-      mainClass: 'StackDemo'
+      mainClass: 'StackDemo',
+      limits: { timeoutMs: 25_000 }
     });
 
     assert.equal(result.outcome, 'success', `Run failed: ${result.stderr}`);

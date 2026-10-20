@@ -17,9 +17,78 @@ import {
   COMPILATION_ERROR_FIXTURE,
   EMPTY_TRACE_FIXTURE
 } from "./trace-fixtures.js";
+import {
+  resolveApiConfig,
+  checkBackendHealth,
+  classifyApiResult
+} from "./api-config.js";
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Grab DOM elements
+export const CODE_TRANSFER_KEY = "algolab_codelab_transfer";
+export const CODELAB_DRAFT_KEY = "algolab_codelab_draft";
+
+/**
+ * Persists student Code Lab working draft to web storage.
+ */
+export function saveCodeLabDraft(storage, payload) {
+  try {
+    if (!storage || !payload) return false;
+    storage.setItem(CODELAB_DRAFT_KEY, JSON.stringify(payload));
+    return true;
+  } catch (err) {
+    console.warn("Failed to save Code Lab draft:", err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved Code Lab draft from web storage.
+ */
+export function loadCodeLabDraft(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(CODELAB_DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.code === "string") {
+      return parsed;
+    }
+  } catch (_) {}
+  return null;
+}
+
+/**
+ * Reads transferred code from the specified web storage instance and consumes it
+ * immediately (clears it from storage) to prevent stale code from being re-loaded on future visits.
+ */
+export function readAndConsumeTransferredCode(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(CODE_TRANSFER_KEY);
+    if (!raw) return null;
+
+    // Immediately remove from storage so it is consumed exactly once
+    storage.removeItem(CODE_TRANSFER_KEY);
+
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.code === "string") {
+        return parsed;
+      }
+    } catch (_) {
+      // Fallback if raw string code was stored directly
+      if (typeof raw === "string" && raw.trim().length > 0) {
+        return { code: raw, problemId: null, problemTitle: null };
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to access storage for transferred code:", err);
+  }
+  return null;
+}
+
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", function () {
+    // Grab DOM elements
   const codeEditor = document.getElementById("code-editor");
   const lineNumbers = document.getElementById("line-numbers");
   const languageSelect = document.getElementById("language-select");
@@ -54,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const visualizationPanel = document.getElementById("visualization-panel");
   const variablesTableBody = document.getElementById("variables-table-body");
   const traceModeBadge = document.getElementById("trace-mode-badge");
+  const backendStatusBadge = document.getElementById("backend-status-badge");
 
   // Step Explanation elements (Phase 8)
   const explanationCategory = document.getElementById("explanation-category");
@@ -75,6 +145,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Active highlighted line state
   let currentActiveLine = null;
+
+  // Track problem ID when opened from Practice Arena
+  let activePracticeProblemId = null;
 
   // Starter Java templates for students
   const TEMPLATES = {
@@ -584,13 +657,42 @@ public class Solution {
     }
   });
 
-  codeEditor.addEventListener("input", () => updateLineNumbers(currentActiveLine));
+  // Helper to persist active Code Lab draft
+  function persistActiveDraft() {
+    const currentCode = codeEditor ? codeEditor.value : "";
+    const currentTemplate = templateSelect ? templateSelect.value : "bubble-sort";
+    const payload = {
+      code: currentCode,
+      template: currentTemplate,
+      problemId: activePracticeProblemId,
+      timestamp: Date.now()
+    };
+    saveCodeLabDraft(typeof window !== "undefined" ? window.localStorage : null, payload);
+
+    // Optional account-level sync if user is logged in
+    if (apiConfig && apiConfig.labStateUrl) {
+      try {
+        fetch(`${apiConfig.labStateUrl}/codelab`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      } catch (_) {}
+    }
+  }
+
+  codeEditor.addEventListener("input", () => {
+    updateLineNumbers(currentActiveLine);
+    persistActiveDraft();
+  });
   codeEditor.addEventListener("scroll", syncScroll);
 
   // --- Template Selector ---
   if (templateSelect) {
     templateSelect.addEventListener("change", function () {
       loadTemplate(this.value);
+      persistActiveDraft();
     });
   }
 
@@ -599,6 +701,7 @@ public class Solution {
     resetCodeBtn.addEventListener("click", function () {
       const currentSelected = templateSelect ? templateSelect.value : "bubble-sort";
       loadTemplate(currentSelected);
+      persistActiveDraft();
       appendConsole("Code editor reset to starter template.", "muted");
 
       if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
@@ -625,25 +728,95 @@ public class Solution {
 
   // --- Submit Solution Button ---
   if (submitBtn) {
-    submitBtn.addEventListener("click", function () {
+    submitBtn.addEventListener("click", async function () {
       appendConsole("Submitting solution to ALGOLAB Practice Arena judging service...", "info");
-      appendConsole(
-        "Judging Service Unavailable: Automated test suite judging service has not been implemented yet (Practice Arena milestone).",
-        "warn"
-      );
-      appendConsole(
-        "Notice: In accordance with ALGOLAB integrity principles, submission verdicts (Accepted, Wrong Answer) and test case pass rates are never fabricated without a real judging service evaluating your code.",
-        "muted"
-      );
+
+      const code = codeEditor.value;
+      if (!code.trim()) {
+        appendConsole("Error: Editor is empty. Write a solution before submitting.", "error");
+        return;
+      }
+
+      if (!apiConfig.judgeUrl) {
+        appendConsole(
+          "Judging Service Offline: Connect the local backend server (npm start in backend/runner) to evaluate submissions.",
+          "warn"
+        );
+        if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
+          submissionStatusBox.className = "submission-status-box status-pending";
+          submissionStatusTitle.textContent = "Judging Service Offline";
+          submissionStatusDesc.textContent =
+            "The backend judging service is currently offline or unreachable. Start the backend runner server to enable automated judging.";
+          if (submissionBadge) {
+            submissionBadge.textContent = "Service Offline";
+            submissionBadge.className = "badge badge-pending";
+          }
+        }
+        return;
+      }
+
+      // Read problem from transfer state, URL param, or default
+      const urlParams = new URLSearchParams(window.location.search);
+      const problemId = activePracticeProblemId || urlParams.get('problem') || 'reverse-array';
 
       if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
         submissionStatusBox.className = "submission-status-box status-pending";
-        submissionStatusTitle.textContent = "Judging Service Unavailable (Practice Arena Milestone)";
-        submissionStatusDesc.textContent =
-          "The Practice Arena automated judging service has not been implemented yet. No test cases were evaluated, and no verdict is reported. Real judging results will appear here once the backend judging engine is connected.";
+        submissionStatusTitle.textContent = `Evaluating solution against "${problemId}" test cases...`;
+        submissionStatusDesc.textContent = "Running test cases in isolated Docker sandbox...";
         if (submissionBadge) {
-          submissionBadge.textContent = "Service Unavailable";
+          submissionBadge.textContent = "Evaluating...";
           submissionBadge.className = "badge badge-pending";
+        }
+      }
+
+      try {
+        const response = await fetch(apiConfig.judgeUrl, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            problemId,
+            code,
+            mode: "submit"
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.verdict === "Accepted") {
+          appendConsole(`Judging Result: ${data.verdict}! Passed all ${data.totalCount} test cases. Time: ${data.executionTimeMs}ms`, "info");
+          if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
+            submissionStatusBox.className = "submission-status-box status-accepted";
+            submissionStatusTitle.textContent = `Verdict: Accepted (${data.passedCount}/${data.totalCount} Passed)`;
+            submissionStatusDesc.textContent = data.message || "All visible and hidden test cases passed!";
+            if (submissionBadge) {
+              submissionBadge.textContent = "Accepted";
+              submissionBadge.className = "badge badge-ready";
+            }
+          }
+        } else {
+          appendConsole(`Judging Result: ${data.verdict} on Test #${data.failedTestCase || 1}. (${data.passedCount}/${data.totalCount} Passed)`, "error");
+          if (data.error) appendConsole(data.error, "warn");
+          if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
+            submissionStatusBox.className = "submission-status-box status-rejected";
+            submissionStatusTitle.textContent = `Verdict: ${data.verdict} (${data.passedCount}/${data.totalCount} Passed)`;
+            submissionStatusDesc.textContent = data.error || `Failed on test case ${data.failedTestCase}.`;
+            if (submissionBadge) {
+              submissionBadge.textContent = data.verdict;
+              submissionBadge.className = "badge badge-pending";
+            }
+          }
+        }
+      } catch (err) {
+        appendConsole(`Submission failed: ${err.message}`, "error");
+        if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
+          submissionStatusBox.className = "submission-status-box status-rejected";
+          submissionStatusTitle.textContent = "Judging Error";
+          submissionStatusDesc.textContent = `Failed to communicate with judging endpoint: ${err.message}`;
+          if (submissionBadge) {
+            submissionBadge.textContent = "Error";
+            submissionBadge.className = "badge badge-pending";
+          }
         }
       }
     });
@@ -987,12 +1160,71 @@ public class Solution {
   }
 
   // =====================================================
-  // REAL JAVA EXECUTION BRIDGE (PHASE 7)
+  // REAL JAVA EXECUTION BRIDGE (PHASE 7 & PHASE 12.3)
   // =====================================================
 
-  const API_EXECUTE_URL = "http://127.0.0.1:3001/api/execute";
   let isExecuting = false;
   let currentExecutionId = 0;
+  const apiConfig = resolveApiConfig();
+  let backendHealthState = "unknown"; // "connected" | "unavailable" | "offline-demo" | "checking"
+
+  function updateBackendStatus(state, details = "") {
+    backendHealthState = state;
+    if (!backendStatusBadge) return;
+
+    if (state === "connected") {
+      backendStatusBadge.textContent = "Live Backend Connected";
+      backendStatusBadge.className = "badge badge-success";
+      backendStatusBadge.title = `Connected to ${apiConfig.baseUrl || "Java execution backend"}`;
+    } else if (state === "unavailable") {
+      backendStatusBadge.textContent = "Live Backend Unavailable";
+      backendStatusBadge.className = "badge badge-error";
+      backendStatusBadge.title = details || "Backend execution server is unreachable";
+    } else if (state === "offline-demo") {
+      backendStatusBadge.textContent = "Offline Demo Mode";
+      backendStatusBadge.className = "badge badge-info";
+      backendStatusBadge.title = "No remote backend configured. Using pre-recorded JDI test fixtures.";
+    } else if (state === "checking") {
+      backendStatusBadge.textContent = "Checking Backend...";
+      backendStatusBadge.className = "badge badge-pending";
+      backendStatusBadge.title = "Probing execution service health endpoint...";
+    }
+  }
+
+  // Probe backend health if configured
+  if (apiConfig.mode === "offline-demo") {
+    updateBackendStatus("offline-demo");
+    if (traceModeBadge) {
+      traceModeBadge.textContent = "Offline Demo Mode";
+      traceModeBadge.className = "badge badge-info";
+    }
+  } else if (apiConfig.mode === "error") {
+    updateBackendStatus("unavailable", apiConfig.error);
+    if (traceModeBadge) {
+      traceModeBadge.textContent = "Config Error";
+      traceModeBadge.className = "badge badge-error";
+    }
+  } else {
+    updateBackendStatus("checking");
+    checkBackendHealth(apiConfig.healthUrl)
+      .then((health) => {
+        if (health.ok) {
+          updateBackendStatus("connected");
+          appendConsole(`Java execution backend connected (${apiConfig.baseUrl}). Live code tracing enabled.`, "info");
+        } else {
+          updateBackendStatus("unavailable", health.error);
+          if (apiConfig.isLocal) {
+            appendConsole("Java execution backend is currently offline (http://127.0.0.1:3001).", "warn");
+            appendConsole("Hint: Run 'npm start' in backend/runner to enable live compilation & tracing. Pre-recorded fixtures remain available.", "muted");
+          } else {
+            appendConsole(`Configured remote execution backend (${apiConfig.baseUrl}) is unreachable: ${health.error}.`, "warn");
+          }
+        }
+      })
+      .catch(() => {
+        updateBackendStatus("unavailable", "Network probe failed");
+      });
+  }
 
   /**
    * Auto-detects public class name from student Java source.
@@ -1010,6 +1242,21 @@ public class Solution {
       const code = codeEditor.value;
       if (!code || code.trim().length === 0) {
         appendConsole("Cannot run empty code. Please write Java code before running.", "warn");
+        return;
+      }
+
+      // Safeguard: Deployed frontend without remote API configured must NOT attempt localhost fetch
+      if (apiConfig.mode === "offline-demo" || !apiConfig.configured || !apiConfig.executeUrl) {
+        appendConsole("Live execution is unavailable: No backend API endpoint configured for this deployment.", "error");
+        appendConsole("Code Lab is operating in Offline Demo Mode. Please select a pre-recorded JDI test fixture from the Demo Fixture dropdown above to inspect execution traces.", "info");
+        appendConsole("Notice: Live Java execution requires the Docker runner backend (see README.md).", "muted");
+        if (traceModeBadge) {
+          traceModeBadge.textContent = "Offline Demo Mode";
+          traceModeBadge.className = "badge badge-info";
+        }
+        if (traceStatusLabel) {
+          traceStatusLabel.textContent = "Demo Mode";
+        }
         return;
       }
 
@@ -1046,10 +1293,13 @@ public class Solution {
       }
 
       updateLineNumbers(null);
-      appendConsole(`Submitting ${mainClass}.java to ALGOLAB execution service (Docker)...`, "info");
+      appendConsole(`Submitting ${mainClass}.java to ALGOLAB execution service (${apiConfig.baseUrl})...`, "info");
+
+      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 30000) : null;
 
       try {
-        const response = await fetch(API_EXECUTE_URL, {
+        const response = await fetch(apiConfig.executeUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1058,8 +1308,11 @@ public class Solution {
             code,
             mainClass,
             stdin: stdin.length > 0 ? stdin : undefined
-          })
+          }),
+          signal: controller ? controller.signal : undefined
         });
+
+        if (timeoutId) clearTimeout(timeoutId);
 
         // Guard against stale responses
         if (executionId !== currentExecutionId) return;
@@ -1071,25 +1324,45 @@ public class Solution {
           data = null;
         }
 
-        if (!response.ok) {
-          handleApiError(response.status, data);
+        const classified = classifyApiResult({
+          status: response.status,
+          data,
+          config: apiConfig
+        });
+
+        if (!classified.success) {
+          updateBackendStatus(response.status >= 500 ? "unavailable" : backendHealthState);
+          handleApiError(response.status, data, classified);
           return;
         }
 
+        // Live execution succeeded!
+        updateBackendStatus("connected");
         handleExecutionSuccess(data, mainClass);
 
       } catch (err) {
+        if (timeoutId) clearTimeout(timeoutId);
         if (executionId !== currentExecutionId) return;
 
-        appendConsole("Cannot connect to the Java execution server. Start the backend and try again.", "error");
-        appendConsole("Hint: Run 'npm start' in backend/runner to start the API server on http://127.0.0.1:3001.", "muted");
+        const isTimeout = err.name === "AbortError";
+        const classified = classifyApiResult({
+          error: err.message,
+          isTimeout,
+          config: apiConfig
+        });
+
+        updateBackendStatus("unavailable", isTimeout ? "Timeout" : "Connection failed");
+
+        for (const msg of classified.messages) {
+          appendConsole(msg.text, msg.type);
+        }
 
         if (traceModeBadge) {
-          traceModeBadge.textContent = "Execution Service Offline";
-          traceModeBadge.className = "badge badge-error";
+          traceModeBadge.textContent = classified.badgeText;
+          traceModeBadge.className = `badge ${classified.badgeClass}`;
         }
         if (traceStatusLabel) {
-          traceStatusLabel.textContent = "Connection Failed";
+          traceStatusLabel.textContent = classified.statusLabel;
         }
         engine.loadTrace([]);
       } finally {
@@ -1102,8 +1375,22 @@ public class Solution {
     });
   }
 
-  function handleApiError(status, data) {
+  function handleApiError(status, data, classified) {
     engine.loadTrace([]);
+
+    if (classified && classified.messages) {
+      for (const msg of classified.messages) {
+        appendConsole(msg.text, msg.type);
+      }
+      if (traceModeBadge) {
+        traceModeBadge.textContent = classified.badgeText;
+        traceModeBadge.className = `badge ${classified.badgeClass}`;
+      }
+      if (traceStatusLabel) {
+        traceStatusLabel.textContent = classified.statusLabel;
+      }
+      return;
+    }
 
     if (status === 429) {
       appendConsole("Server Busy: Maximum concurrent container executions reached. Please try again shortly.", "warn");
@@ -1272,7 +1559,7 @@ public class Solution {
       }
 
       appendConsole(`Loading pre-recorded test fixture: ${label}...`, "info");
-      appendConsole("Note: This is a pre-recorded JDI test fixture for playback evaluation. It does not represent live code execution.", "muted");
+      appendConsole("Notice: Displaying a PRE-RECORDED JDI demo trace for playback evaluation. This is NOT a newly generated live Java execution trace.", "muted");
 
       // Enable playback controls
       if (traceResetBtn) traceResetBtn.disabled = false;
@@ -1310,8 +1597,97 @@ public class Solution {
   }
 
   // --- Initial Page Setup ---
-  loadTemplate("bubble-sort");
-  appendConsole("ALGOLAB Code Lab initialized. Ready for editing.", "info");
-  appendConsole("Select a template or write your custom Java code.", "muted");
+  const transferred = readAndConsumeTransferredCode(typeof window !== "undefined" ? window.sessionStorage : null);
+
+  if (transferred && typeof transferred.code === "string" && transferred.code.trim().length > 0) {
+    // Populate the editor with transferred code, preserving exact formatting, whitespace, and line breaks
+    codeEditor.value = transferred.code;
+    updateLineNumbers(null);
+    codeEditor.scrollTop = 0;
+
+    const problemId = transferred.problemId;
+    const problemTitle = transferred.problemTitle || (problemId ? problemId : "Practice Arena Problem");
+    if (problemId) {
+      activePracticeProblemId = problemId;
+    }
+
+    // Match existing template option or create a dedicated option
+    const matchingOption = problemId ? templateSelect?.querySelector(`option[value="${problemId}"]`) : null;
+    if (matchingOption) {
+      if (templateSelect) templateSelect.value = problemId;
+      TEMPLATES[problemId] = transferred.code;
+    } else {
+      let customOpt = templateSelect?.querySelector('option[value="practice-transfer"]');
+      if (!customOpt && templateSelect) {
+        customOpt = document.createElement("option");
+        customOpt.value = "practice-transfer";
+        templateSelect.insertBefore(customOpt, templateSelect.firstChild);
+      }
+      if (customOpt) {
+        customOpt.textContent = `Practice: ${problemTitle}`;
+        templateSelect.value = "practice-transfer";
+      }
+      TEMPLATES["practice-transfer"] = transferred.code;
+    }
+
+    // Persist transferred code into draft storage so subsequent page refreshes preserve it
+    persistActiveDraft();
+
+    appendConsole(`Imported Java code from Practice Arena (${problemTitle}). Ready for execution and visual JDI tracing.`, "info");
+    if (submissionStatusBox && submissionStatusTitle && submissionStatusDesc) {
+      submissionStatusBox.className = "submission-status-box status-pending";
+      submissionStatusTitle.textContent = `Ready: ${problemTitle}`;
+      submissionStatusDesc.textContent =
+        'Transferred from Practice Arena. Click "Run Code" for visual JDI tracing or "Submit Solution" for automated judging.';
+      if (submissionBadge) {
+        submissionBadge.textContent = "Imported";
+        submissionBadge.className = "badge badge-info";
+      }
+    }
+  } else {
+    // 2. Check for an existing saved draft in localStorage
+    const savedDraft = loadCodeLabDraft(typeof window !== "undefined" ? window.localStorage : null);
+    if (savedDraft && typeof savedDraft.code === "string" && savedDraft.code.trim().length > 0) {
+      codeEditor.value = savedDraft.code;
+      updateLineNumbers(null);
+      codeEditor.scrollTop = 0;
+
+      if (savedDraft.problemId) {
+        activePracticeProblemId = savedDraft.problemId;
+      }
+
+      if (savedDraft.template && templateSelect) {
+        const matchingOpt = templateSelect.querySelector(`option[value="${savedDraft.template}"]`);
+        if (matchingOpt) {
+          templateSelect.value = savedDraft.template;
+        } else if (savedDraft.template === "practice-transfer") {
+          let customOpt = templateSelect.querySelector('option[value="practice-transfer"]');
+          if (!customOpt) {
+            customOpt = document.createElement("option");
+            customOpt.value = "practice-transfer";
+            templateSelect.insertBefore(customOpt, templateSelect.firstChild);
+          }
+          customOpt.textContent = "Saved Custom Draft";
+          templateSelect.value = "practice-transfer";
+          TEMPLATES["practice-transfer"] = savedDraft.code;
+        }
+      }
+
+      appendConsole("Restored your saved Java draft from previous session.", "info");
+    } else {
+      // 3. Fallback to default Bubble Sort template
+      loadTemplate("bubble-sort");
+      if (templateSelect) templateSelect.value = "bubble-sort";
+      persistActiveDraft();
+      appendConsole("ALGOLAB Code Lab initialized. Ready for editing.", "info");
+    }
+  }
+
+  if (apiConfig.mode === "offline-demo") {
+    appendConsole("Mode: Offline Demo Mode (Select a fixture to inspect pre-recorded JDI traces).", "muted");
+  } else {
+    appendConsole("Select a template or write your custom Java code.", "muted");
+  }
   appendConsole("Tip: Click 'Load Demo Trace' to evaluate the Phase 2 Trace Playback Engine with pre-recorded JDI events.", "info");
-});
+  });
+}

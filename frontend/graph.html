@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Graph Lab - ALGOLAB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+<div class="app-container">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">ALGO<span class="brand-highlight">LAB</span></span>
+      </a>
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">&times;</button>
+    </div>
+
+    <div class="sidebar-badge-wrap">
+      <span class="sidebar-pill">B.Tech DSA Platform</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main Navigation">
+      <ul class="nav-sections-list" id="nav-links">
+        
+        <!-- MAIN -->
+        <li class="nav-section-header">MAIN</li>
+        <li>
+          <a href="index.html" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="dashboard.html" class="nav-link">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- CODING -->
+        <li class="nav-section-header">CODING</li>
+        <li>
+          <a href="codelab.html" class="nav-link">
+            <span class="nav-icon">💻</span>
+            <span class="nav-text">Code Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="practice.html" class="nav-link">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-text">Practice Arena</span>
+          </a>
+        </li>
+
+        <!-- ALGORITHMS -->
+        <li class="nav-section-header">ALGORITHMS</li>
+        <li>
+          <a href="algorithms.html" class="nav-link">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">Algorithm Library</span>
+          </a>
+        </li>
+        <li>
+          <a href="visualizer.html" class="nav-link">
+            <span class="nav-icon">🔄</span>
+            <span class="nav-text">Visualizer</span>
+          </a>
+        </li>
+
+        <!-- DATA STRUCTURES -->
+        <li class="nav-section-header">DATA STRUCTURES</li>
+        <li>
+          <a href="stack.html" class="nav-link">
+            <span class="nav-icon">🥞</span>
+            <span class="nav-text">Stack Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="queue.html" class="nav-link">
+            <span class="nav-icon">🚶</span>
+            <span class="nav-text">Queue Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="linkedlist.html" class="nav-link">
+            <span class="nav-icon">🔗</span>
+            <span class="nav-text">Linked List Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="tree.html" class="nav-link">
+            <span class="nav-icon">🌳</span>
+            <span class="nav-text">Tree Lab</span>
+          </a>
+        </li>
+
+        <!-- ADVANCED LABS -->
+        <li class="nav-section-header">ADVANCED LABS</li>
+        <li>
+          <a href="graph.html" class="nav-link active">
+            <span class="nav-icon">🕸️</span>
+            <span class="nav-text">Graph Lab</span>
+          </a>
+        </li>
+        <li>
+          <a href="maze.html" class="nav-link">
+            <span class="nav-icon">🧩</span>
+            <span class="nav-text">Maze Lab</span>
+          </a>
+        </li>
+
+        <!-- ACCOUNT -->
+        <li class="nav-section-header">ACCOUNT</li>
+        <li id="nav-auth-slot">
+          <a href="login.html" class="nav-link">
+            <span class="nav-icon">🔑</span>
+            <span class="nav-text">Login</span>
+          </a>
+          <a href="register.html" class="nav-link">
+            <span class="nav-icon">✨</span>
+            <span class="nav-text">Register</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-status-pill">
+        <span class="pulse-indicator"></span>
+        <span class="status-label">System Ready</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Main Content Layout -->
+  <div class="app-main">
+    <!-- Top Navigation Bar -->
+    <header class="app-topbar mobile-topbar">
+      <div class="topbar-left">
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="app-sidebar">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="index.html" class="topbar-brand">
+          <span>ALGO<span class="brand-highlight">LAB</span></span>
+        </a>
+      </div>
+      <nav class="topbar-links" aria-label="Quick Navigation">
+        <a href="index.html" class="topbar-link">Home</a>
+        <a href="dashboard.html" class="topbar-link">Dashboard</a>
+        <a href="index.html#about" class="topbar-link">About</a>
+      </nav>
+      <div class="topbar-right" id="mobile-auth-widget"></div>
+    </header>
+
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <section class="hero" style="padding: 40px 0 10px;">
+    <div class="container">
+      <h1 id="graph-title">Interactive Graph <span class="highlight">Lab</span></h1>
+      <p id="graph-desc">Explore graph representations (Adjacency Matrix &amp; List), topology mutations, and interactive traversals with Breadth-First Search (BFS), Depth-First Search (DFS), and Dijkstra's Shortest Path Algorithm.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN LAYOUT ===================== -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="visualizer-layout">
+
+        <!-- LEFT PANEL: Graph Canvas & Interactive Controls -->
+        <div class="panel">
+
+          <!-- Presets & Mode Toggles -->
+          <div class="controls" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" id="toggle-directed" style="cursor: pointer;" />
+                Directed Graph
+              </label>
+              <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" id="toggle-weighted" style="cursor: pointer;" />
+                Weighted Edges
+              </label>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="preset-select" style="font-size: 0.85rem; font-weight: 600;">Presets:</label>
+              <select id="preset-select" class="editor-select" aria-label="Sample Graph Presets"
+                style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 0.85rem;">
+                <option value="standard" selected>Standard Graph (A-F, Undirected)</option>
+                <option value="weighted">Weighted Highway (Dijkstra Demo)</option>
+                <option value="disconnected">Disconnected Components</option>
+                <option value="cycle-loop">Cycle &amp; Self-Loop Demo</option>
+                <option value="empty">Custom Empty Canvas</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Node & Edge Mutation Controls -->
+          <div class="controls" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <!-- Node actions -->
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <input type="text" id="node-label-input" placeholder="Node" maxlength="6" value="G" aria-label="New Node Label"
+                style="width: 58px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--color-border); text-align: center; font-weight: 700;" />
+              <button class="btn btn-insert" id="add-node-btn" title="Add a new node to graph">+ Node</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <select id="remove-node-select" aria-label="Select node to remove"
+                style="padding: 5px 6px; border-radius: 6px; border: 1px solid var(--color-border); background: #ffffff; font-weight: 600; font-size: 0.85rem;"></select>
+              <button class="btn btn-delete" id="remove-node-btn" title="Delete selected node and incident edges">- Node</button>
+            </div>
+
+            <!-- Edge actions -->
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label style="font-size: 0.8rem; color: var(--color-text-light);">Edge:</label>
+              <select id="edge-from-select" aria-label="Edge From" style="padding: 5px 6px; border-radius: 6px; border: 1px solid var(--color-border); background: #ffffff; font-weight: 600; font-size: 0.85rem;"></select>
+              <span style="color: #94a3b8; font-weight: 700;">&rarr;</span>
+              <select id="edge-to-select" aria-label="Edge To" style="padding: 5px 6px; border-radius: 6px; border: 1px solid var(--color-border); background: #ffffff; font-weight: 600; font-size: 0.85rem;"></select>
+              <input type="number" id="edge-weight-input" placeholder="W" value="1" min="0" max="999" aria-label="Edge Weight"
+                style="width: 48px; padding: 5px 6px; border-radius: 6px; border: 1px solid var(--color-border); text-align: center; font-weight: 600;" />
+              <button class="btn btn-secondary" id="add-edge-btn" title="Connect edge between nodes">+ Edge</button>
+              <button class="btn btn-secondary" id="remove-edge-btn" title="Remove edge between nodes">- Edge</button>
+            </div>
+
+            <button class="btn btn-secondary" id="clear-graph-btn" title="Clear all nodes and edges from canvas" style="margin-left: auto;">Clear Graph</button>
+          </div>
+
+          <!-- Algorithm Execution Controls -->
+          <div class="controls" style="margin-bottom: 14px; flex-wrap: wrap; gap: 8px; background: #eef2ff; padding: 10px; border-radius: 8px; border: 1px solid #c7d2fe; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="algo-start-node" style="font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">Source:</label>
+              <select id="algo-start-node" aria-label="Algorithm Source Node"
+                style="padding: 5px 8px; border-radius: 6px; border: 1px solid #93c5fd; background: #ffffff; font-weight: 700;"></select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="algo-target-node" style="font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">Target (Dijkstra):</label>
+              <select id="algo-target-node" aria-label="Algorithm Target Node"
+                style="padding: 5px 8px; border-radius: 6px; border: 1px solid #93c5fd; background: #ffffff; font-weight: 600;"></select>
+            </div>
+
+            <button class="btn btn-primary" id="run-bfs-btn" title="Run Breadth-First Search (Queue / Layer by Layer)">Run BFS</button>
+            <button class="btn btn-primary" id="run-dfs-btn" title="Run Depth-First Search (Stack / Backtracking)">Run DFS</button>
+            <button class="btn btn-search" id="run-dijkstra-btn" title="Run Dijkstra's Algorithm (Shortest Path)">Run Dijkstra</button>
+          </div>
+
+          <!-- SVG Graph Canvas -->
+          <div class="graph-visual-wrapper">
+            <div id="graph-canvas-container" aria-label="Interactive Graph Canvas"></div>
+          </div>
+
+          <!-- Traversal Stream Bar -->
+          <div style="margin-bottom: 12px; margin-top: 10px;">
+            <label style="font-size: 0.82rem; font-weight: 600; color: var(--color-text-light);">Traversal Stream / Discovered Order:</label>
+            <div id="traversal-stream" class="traversal-stream">
+              <span style="color: #94a3b8; font-style: italic;">No traversal running. Select Source and click BFS, DFS, or Dijkstra.</span>
+            </div>
+          </div>
+
+          <!-- Step Message Box -->
+          <div id="step-message" class="step-message-box">Graph initialized. Canvas is ready.</div>
+
+          <!-- Playback Controls -->
+          <div class="controls">
+            <button class="btn btn-primary" id="play-btn">Play</button>
+            <button class="btn btn-secondary" id="pause-btn" disabled>Pause</button>
+            <button class="btn btn-secondary" id="prev-btn" disabled>Prev Step</button>
+            <button class="btn btn-secondary" id="next-btn" disabled>Next Step</button>
+            <button class="btn btn-secondary" id="reset-timeline-btn">Reset</button>
+
+            <div class="speed-group">
+              <label for="speed-range">Speed</label>
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Slow</span>
+              <input type="range" id="speed-range" min="100" max="1500" value="800" step="100" />
+              <span style="font-size: 0.8rem; color: var(--color-text-light);">Fast</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT PANEL: State Inspector, Representations & Explanations -->
+        <div class="panel">
+
+          <!-- Graph State Inspector -->
+          <h3>Graph State Inspector</h3>
+          <ul class="info-list">
+            <li><span>Timeline Step</span> <span id="inspector-step" style="font-weight: 600;">1 / 1</span></li>
+            <li><span>Topology</span> <span id="inspector-mode" style="font-weight: 600; font-size: 0.85rem;">Undirected, Unweighted</span></li>
+            <li><span>Total Nodes (V)</span> <span id="inspector-nodes" style="font-weight: 700;">0</span></li>
+            <li><span>Total Edges (E)</span> <span id="inspector-edges" style="font-weight: 700;">0</span></li>
+            <li><span>Active Node</span> <span id="inspector-active-node" style="font-family: monospace; font-weight: 700;">None</span></li>
+            <li><span>Visited Nodes</span> <span id="inspector-visited" style="font-weight: 600;">0 / 0</span></li>
+            <li><span>Status</span> <span id="inspector-status"><span class="status-badge badge-ready">Ready</span></span></li>
+          </ul>
+
+          <!-- Step Explanation Card -->
+          <div style="margin-top: 16px;">
+            <div class="explanation-card" style="border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 0.95rem; color: var(--color-primary-dark); margin: 0;">Step Explanation</h4>
+                <span id="explanation-op" class="badge" style="background: #eef2ff; color: var(--color-primary); font-size: 0.75rem; padding: 2px 6px;">INITIAL</span>
+              </div>
+              <p id="explanation-what" style="font-size: 0.88rem; color: var(--color-text); margin-bottom: 8px; font-weight: 500;">Graph canvas ready.</p>
+              <p id="explanation-why" style="font-size: 0.82rem; color: var(--color-text-light); line-height: 1.45; margin-bottom: 8px;">Graph maintains nodes, edges, adjacency matrix, and adjacency list.</p>
+              <div id="explanation-summary" style="font-size: 0.78rem; font-family: monospace; color: #475569; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">V = 0, E = 0</div>
+            </div>
+          </div>
+
+          <!-- Dual Graph Representations: Tabs / Viewports -->
+          <div style="margin-top: 18px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: var(--color-primary-dark);">Graph Representations</h4>
+            <p style="font-size: 0.78rem; color: var(--color-text-light); margin-bottom: 8px;">
+              Convention: In unweighted mode, <code>1</code> indicates adjacent edge, <code>0</code> indicates no edge. In weighted mode, cells show edge weight (or <code>—</code> when no edge exists).
+            </p>
+
+            <!-- Adjacency Matrix -->
+            <div style="margin-bottom: 12px;">
+              <strong style="font-size: 0.82rem; color: #334155;">1. Adjacency Matrix</strong>
+              <div id="adj-matrix-container" class="representation-box" style="margin-top: 4px; overflow-x: auto;"></div>
+            </div>
+
+            <!-- Adjacency List -->
+            <div style="margin-bottom: 12px;">
+              <strong style="font-size: 0.82rem; color: #334155;">2. Adjacency List</strong>
+              <div id="adj-list-container" class="representation-box" style="margin-top: 4px;"></div>
+            </div>
+          </div>
+
+          <!-- Dijkstra Distance Table -->
+          <div style="margin-top: 16px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: var(--color-primary-dark);">Dijkstra Distance &amp; Predecessor Table</h4>
+            <div id="distance-table-container" class="representation-box" style="overflow-x: auto;">
+              <p style="color: #94a3b8; font-style: italic; font-size: 0.85rem; padding: 10px;">Distance table activates when Dijkstra runs.</p>
+            </div>
+          </div>
+
+          <!-- Complexity Reference Table -->
+          <div style="margin-top: 18px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px;">Complexity Reference</h4>
+            <table class="complexity-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time Complexity</th>
+                  <th>Space Complexity</th>
+                  <th>Optimal Shortest Path?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>BFS</strong></td>
+                  <td>O(V + E)</td>
+                  <td>O(V)</td>
+                  <td>Yes (Unweighted only)</td>
+                </tr>
+                <tr>
+                  <td><strong>DFS</strong></td>
+                  <td>O(V + E)</td>
+                  <td>O(V)</td>
+                  <td>No (Explores deep branches)</td>
+                </tr>
+                <tr>
+                  <td><strong>Dijkstra</strong></td>
+                  <td>O((V + E) log V)</td>
+                  <td>O(V)</td>
+                  <td>Yes (Non-negative weights w &ge; 0)</td>
+                </tr>
+                <tr>
+                  <th colspan="4">Representation Space</th>
+                </tr>
+                <tr>
+                  <td colspan="2">Adjacency Matrix: <code>O(V&sup2;)</code> space</td>
+                  <td colspan="2">Adjacency List: <code>O(V + E)</code> space</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ALGOLAB. Educational Data Structures &amp; Algorithms Platform.</p>
+    </div>
+  </footer>
+  </div>
+</div>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/graph.js"></script>
+  <script type="module" src="js/auth-nav.js"></script>
+</body>
+
+</html>

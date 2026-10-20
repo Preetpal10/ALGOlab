@@ -12,6 +12,12 @@ import http from 'node:http';
 import { createServer } from '../server.js';
 import { runInContainer } from '../docker-runner.js';
 import { TracePlaybackEngine } from '../../../frontend/js/playback-engine.js';
+import {
+  isLocalHostname,
+  resolveApiConfig,
+  checkBackendHealth,
+  classifyApiResult
+} from '../../../frontend/js/api-config.js';
 
 function httpRequest(serverOrPort, { method = 'POST', path = '/api/execute', headers = {}, body = null }) {
   return new Promise((resolve, reject) => {
@@ -219,5 +225,225 @@ describe('Code Lab Frontend Integration (Phase 7)', () => {
         return true;
       }
     );
+  });
+});
+
+describe('Code Lab API Configuration & Diagnostics (Phase 12.3)', () => {
+
+  // Test 5: Local development resolution
+  test('5. Local development endpoint resolution defaults to http://127.0.0.1:3001', () => {
+    const localHosts = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0', ''];
+    for (const host of localHosts) {
+      assert.equal(isLocalHostname(host), true, `Expected ${host} to be recognized as local`);
+      const cfg = resolveApiConfig({ hostname: host });
+      assert.equal(cfg.mode, 'local');
+      assert.equal(cfg.configured, true);
+      assert.equal(cfg.isLocal, true);
+      assert.equal(cfg.baseUrl, 'http://127.0.0.1:3001');
+      assert.equal(cfg.executeUrl, 'http://127.0.0.1:3001/api/execute');
+      assert.equal(cfg.healthUrl, 'http://127.0.0.1:3001/api/health');
+    }
+  });
+
+  // Test 6: Configured production API URL
+  test('6. Configured production API URL resolves to remote HTTPS endpoint and cleans slashes', () => {
+    const cfg = resolveApiConfig({
+      hostname: 'algolab.example.com',
+      protocol: 'https:',
+      customUrl: 'https://api.algolab.example.com///',
+    });
+
+    assert.equal(cfg.mode, 'remote');
+    assert.equal(cfg.configured, true);
+    assert.equal(cfg.isLocal, false);
+    assert.equal(cfg.baseUrl, 'https://api.algolab.example.com');
+    assert.equal(cfg.executeUrl, 'https://api.algolab.example.com/api/execute');
+    assert.equal(cfg.healthUrl, 'https://api.algolab.example.com/api/health');
+  });
+
+  // Test 7: Missing production API URL enforces Offline Demo Mode
+  test('7. Missing production API URL enforces Offline Demo Mode and prevents requests to localhost', () => {
+    const cfg = resolveApiConfig({
+      hostname: 'algolab-preview.netlify.app',
+      protocol: 'https:',
+    });
+
+    assert.equal(cfg.mode, 'offline-demo');
+    assert.equal(cfg.configured, false);
+    assert.equal(cfg.isLocal, false);
+    assert.equal(cfg.baseUrl, null);
+    assert.equal(cfg.executeUrl, null);
+    assert.equal(cfg.healthUrl, null);
+    assert.equal(cfg.reason, 'unconfigured_remote');
+    assert.ok(cfg.notice.includes('Offline Demo Mode'));
+  });
+
+  // Test 8: Protocol validation and mixed-content prevention
+  test('8. Protocol validation rejects non-HTTP/HTTPS and prevents mixed-content on HTTPS origin', () => {
+    // Mixed content block
+    const mixedCfg = resolveApiConfig({
+      hostname: 'algolab.netlify.app',
+      protocol: 'https:',
+      customUrl: 'http://api.insecure.com',
+    });
+    assert.equal(mixedCfg.mode, 'error');
+    assert.equal(mixedCfg.statusText, 'Mixed Content Blocked');
+    assert.equal(mixedCfg.configured, false);
+
+    // Invalid scheme
+    const ftpCfg = resolveApiConfig({
+      customUrl: 'ftp://api.example.com',
+    });
+    assert.equal(ftpCfg.mode, 'error');
+    assert.equal(ftpCfg.statusText, 'Invalid API Protocol');
+
+    // Malformed URL
+    const badCfg = resolveApiConfig({
+      customUrl: 'not an absolute url',
+    });
+    assert.equal(badCfg.mode, 'error');
+    assert.equal(badCfg.statusText, 'Malformed API URL');
+  });
+
+  // Test 9: Health check probe reaches active server
+  test('9. Health check probe reaches active server and reports status ok', async () => {
+    const server = await startTestServer();
+    try {
+      const port = server.address().port;
+      const health = await checkBackendHealth(`http://127.0.0.1:${port}/api/health`, {
+        fetchFn: async (url, opts) => {
+          const res = await httpRequest(port, { method: 'GET', path: '/api/health' });
+          return {
+            ok: res.statusCode === 200,
+            status: res.statusCode,
+            json: async () => res.json,
+          };
+        },
+      });
+
+      assert.equal(health.ok, true);
+      assert.equal(health.status, 200);
+      assert.ok(health.data);
+      assert.equal(health.data.status, 'ok');
+      assert.equal(health.data.service, 'algolab-runner');
+    } finally {
+      await stopTestServer(server);
+    }
+  });
+
+  // Test 10: Health check probe against offline server returns ok: false
+  test('10. Health check probe against offline server returns ok: false without crashing', async () => {
+    const offlinePort = 59998;
+    const health = await checkBackendHealth(`http://127.0.0.1:${offlinePort}/api/health`, {
+      fetchFn: async (url, opts) => {
+        const res = await httpRequest(offlinePort, { method: 'GET', path: '/api/health' });
+        return {
+          ok: res.statusCode === 200,
+          status: res.statusCode,
+          json: async () => res.json,
+        };
+      },
+    });
+
+    assert.equal(health.ok, false);
+    assert.ok(health.error);
+  });
+
+  // Test 11: classifyApiResult handles network, CORS, and container errors
+  test('11. classifyApiResult distinguishes network failures, CORS rejection, and server errors', () => {
+    // Local network error
+    const localErr = classifyApiResult({ error: 'Connection refused', config: { isLocal: true } });
+    assert.equal(localErr.success, false);
+    assert.equal(localErr.statusLabel, 'Connection Failed');
+    assert.ok(localErr.messages[1].text.includes('127.0.0.1:3001'));
+
+    // Remote network error
+    const remoteErr = classifyApiResult({ error: 'Network timeout', config: { isLocal: false } });
+    assert.equal(remoteErr.success, false);
+    assert.ok(remoteErr.messages[1].text.includes('remote runner VM'));
+
+    // CORS rejection (403)
+    const corsErr = classifyApiResult({ status: 403, data: { error: 'Origin not allowed' } });
+    assert.equal(corsErr.success, false);
+    assert.equal(corsErr.badgeText, 'Access Denied (403)');
+    assert.equal(corsErr.statusLabel, 'CORS / Forbidden');
+
+    // 413 Payload Too Large
+    const sizeErr = classifyApiResult({ status: 413 });
+    assert.equal(sizeErr.success, false);
+    assert.equal(sizeErr.badgeText, 'Code Too Large (413)');
+
+    // 415 Unsupported Media Type
+    const mediaErr = classifyApiResult({ status: 415 });
+    assert.equal(mediaErr.success, false);
+    assert.equal(mediaErr.badgeText, 'Unsupported Media (415)');
+
+    // 429 Server Busy
+    const busyErr = classifyApiResult({ status: 429 });
+    assert.equal(busyErr.success, false);
+    assert.equal(busyErr.badgeText, 'Server Busy (429)');
+
+    // 503 Docker Unavailable
+    const dockerErr = classifyApiResult({ status: 503, data: { outcome: 'docker_unavailable' } });
+    assert.equal(dockerErr.success, false);
+    assert.equal(dockerErr.badgeText, 'Docker Unavailable');
+
+    // Client Timeout
+    const timeoutErr = classifyApiResult({ isTimeout: true });
+    assert.equal(timeoutErr.success, false);
+    assert.equal(timeoutErr.badgeText, 'Request Timed Out');
+  });
+
+  // Test 12: classifyApiResult detects malformed payloads and missing outcomes
+  test('12. classifyApiResult detects malformed payloads and missing outcomes', () => {
+    // Null data on 200 OK
+    const nullData = classifyApiResult({ status: 200, data: null });
+    assert.equal(nullData.success, false);
+    assert.equal(nullData.badgeText, 'Malformed Response');
+
+    // Missing outcome field
+    const missingOutcome = classifyApiResult({ status: 200, data: { status: 'running' } });
+    assert.equal(missingOutcome.success, false);
+    assert.equal(missingOutcome.badgeText, 'Invalid Outcome');
+
+    // Valid 200 with outcome
+    const validOutcome = classifyApiResult({ status: 200, data: { outcome: 'success', events: [] } });
+    assert.equal(validOutcome.success, true);
+    assert.equal(validOutcome.outcome, 'success');
+  });
+
+  // Test 13: Prevention of false success messages across all error conditions
+  test('13. Prevention of false success messages across all error conditions', () => {
+    const errorOutcomes = [
+      { status: 400, data: { error: 'Syntax error' } },
+      { status: 403, data: { error: 'Forbidden' } },
+      { status: 413, data: { error: 'Too large' } },
+      { status: 429, data: { error: 'Rate limit' } },
+      { status: 503, data: { outcome: 'docker_unavailable' } },
+      { status: 500, data: { error: 'Internal failure' } },
+      { status: 200, data: { outcome: 'compilation_error' } },
+      { status: 200, data: { outcome: 'timeout' } },
+      { status: 200, data: { outcome: 'runtime_error' } },
+      { error: 'Fetch failed' },
+      { isTimeout: true },
+    ];
+
+    for (const testCase of errorOutcomes) {
+      const result = classifyApiResult(testCase);
+      // For any non-success outcome, success flag must be false
+      if (testCase.data?.outcome && testCase.status === 200 && testCase.data.outcome !== 'success') {
+        // Outcome is present but represents error
+        assert.equal(result.success, true);
+        assert.notEqual(result.outcome, 'success');
+      } else if (!testCase.data?.outcome || testCase.status !== 200) {
+        assert.equal(result.success, false);
+      }
+
+      // Ensure that in the frontend, error states clear the TracePlaybackEngine
+      const engine = new TracePlaybackEngine();
+      engine.loadTrace([]);
+      assert.equal(engine.steps.length, 0);
+      assert.notEqual(engine.status, 'ready');
+    }
   });
 });

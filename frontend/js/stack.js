@@ -8,6 +8,36 @@
 // and Transparent Educational State Explanations.
 // =============================================================================
 
+export const STACK_STORAGE_KEY = 'algolab_stack_state';
+
+/**
+ * Persists stack elements to web storage.
+ */
+export function saveStackState(storage, state) {
+  try {
+    if (!storage || !state) return false;
+    storage.setItem(STACK_STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (err) {
+    console.warn('Failed to save stack state:', err);
+    return false;
+  }
+}
+
+/**
+ * Loads saved stack elements from web storage.
+ */
+export function loadStackState(storage) {
+  try {
+    if (!storage) return null;
+    const raw = storage.getItem(STACK_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * Core Stack Data Structure Engine.
  * Operates purely on state and generates verifiable step snapshots.
@@ -386,8 +416,18 @@ if (typeof document !== 'undefined') {
     const explanationWhy = document.getElementById('explanation-why');
     const explanationSummary = document.getElementById('explanation-summary');
 
-    // Initialize Stack Engine
-    const stack = new StackEngine();
+    // Initialize Stack Engine with saved elements if present
+    const savedState = loadStackState(typeof window !== 'undefined' ? window.localStorage : null);
+    const initialElements = (savedState && Array.isArray(savedState.elements)) ? savedState.elements : [];
+    const stack = new StackEngine(initialElements);
+
+    function persistCurrentStack() {
+      const state = {
+        elements: [...stack.elements],
+        timestamp: Date.now()
+      };
+      saveStackState(typeof window !== 'undefined' ? window.localStorage : null, state);
+    }
 
     // Auto-play interval state
     let isPlaying = false;
@@ -606,6 +646,7 @@ if (typeof document !== 'undefined') {
         const numVal = (rawVal !== '' && !isNaN(Number(rawVal))) ? Number(rawVal) : Math.floor(Math.random() * 90) + 10;
         const step = stack.push(numVal);
         renderStep(step);
+        persistCurrentStack();
         if (stackInput) {
           // Prepare next suggested number
           stackInput.value = Math.floor(Math.random() * 90) + 10;
@@ -629,6 +670,7 @@ if (typeof document !== 'undefined') {
         pause();
         const step = stack.pop();
         renderStep(step);
+        persistCurrentStack();
       });
     }
 
@@ -647,6 +689,7 @@ if (typeof document !== 'undefined') {
         pause();
         stack.resetSequence();
         renderStep(stack.getCurrentStep());
+        persistCurrentStack();
       });
     }
 

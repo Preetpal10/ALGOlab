@@ -82,8 +82,10 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
-# Private development documentation
-/docs/
+# Private AI development prompts & scratch notes (preserved locally, untracked in Git)
+docs/ALGOLAB_PHASE_BY_PHASE_PROMPTS.md
+docs/ANTIGRAVITY_CLAUDE_PROMPT.md
+
 # Hide these files from Git
-.gitattributes
-.env.example
+
+!.env.example
