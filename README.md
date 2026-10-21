@@ -188,7 +188,7 @@ Its interface includes:
 - Trace visualization.
 - Variable and program-state inspection.
 - Reset functionality.
-- 
+  
 The Code Lab interface provides controls for Java code editing,
 execution, console output, execution tracing, and program-state
 inspection.
@@ -681,8 +681,10 @@ The application design includes the following considerations:
 
 Docker-based execution is intended to reduce the risks of running student code. It should not be treated as a guarantee of complete security.
 
-Before exposing the execution service to the public internet, review its authentication, rate limits, resource restrictions, network isolation, logging, and operational monitoring.
 
+Before exposing the execution service to the public internet, review
+its authentication, rate limits, resource restrictions, network
+isolation, logging, and operational monitoring.
 ---
 
 ## Current Limitations
