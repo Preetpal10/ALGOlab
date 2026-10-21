@@ -188,12 +188,23 @@ Its interface includes:
 - Trace visualization.
 - Variable and program-state inspection.
 - Reset functionality.
+- 
+The Code Lab interface provides controls for Java code editing,
+execution, console output, execution tracing, and program-state
+inspection.
 
-The execution environment uses a Node.js server and Docker-based Java runner. Java tracing uses the Java Debug Interface (JDI) to collect execution information for supported programs.
+The backend uses Node.js and a Docker-based Java execution runner.
+Java tracing uses the Java Debug Interface (JDI) for supported
+programs.
 
-When the live execution environment is unavailable, the interface can use pre-recorded trace fixtures for demonstration where supported.
+**Current deployment status:** The Code Lab interface is deployed,
+but live Java execution and tracing are not available on the public
+website until the backend and execution environment are deployed
+and configured.
 
-**Important:** Real-time execution and tracing require the local backend and its Docker execution environment to be available.
+Pre-recorded trace demonstrations may be available where supported.
+They should not be confused with live execution of user-submitted
+Java code.
 
 ### 7. Practice Arena
 
@@ -219,7 +230,12 @@ Features include:
 - Independent drafts for different problems.
 - Transfer of code from Practice Arena to Code Lab.
 
-The evaluation result depends on the configured backend and execution environment.
+**Current deployment status:** The Practice Arena interface is
+available on the deployed frontend. Automated submission evaluation
+requires the backend, database configuration where applicable,
+and a working code execution service.
+
+Live judging is not currently configured on the public deployment.
 
 ### 8. Authentication and Progress Persistence
 
@@ -231,7 +247,10 @@ The backend supports application functionality for:
 - Problem progress persistence.
 - Lab-state persistence.
 
-These features use the configured backend and database. They require the appropriate local services and configuration.
+**Current deployment status:** Production database connectivity
+has not yet been configured. Database-dependent authentication,
+submission persistence, and learning-progress persistence may
+therefore be unavailable on the public website.
 
 ### 9. Execution Status and Error Handling
 
@@ -524,9 +543,9 @@ Start the backend and frontend in separate terminals.
 ### Terminal 1: Start the Backend
 
 ```powershell
-cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3\backend\runner"
+cd backend/runner
 npm start
-```
+'''
 
 The backend is configured to use port `3001` in the documented local setup.
 
@@ -541,7 +560,6 @@ A successful health response indicates that the backend is reachable. Live judgi
 ### Terminal 2: Start the Frontend
 
 ```powershell
-cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3"
 npx serve -l 8000 frontend
 ```
 
@@ -598,7 +616,7 @@ The documented test coverage includes areas such as:
 Navigate to the backend runner directory:
 
 ```powershell
-cd "C:\Users\m s i\Downloads\ALGOLAB-frontend_3\backend\runner"
+cd backend/runner
 ```
 
 Run the test commands defined in the project's `package.json`.
@@ -669,16 +687,39 @@ Before exposing the execution service to the public internet, review its authent
 
 ## Current Limitations
 
-The following limitations should be considered when running or evaluating ALGOLAB:
+## Current Limitations
 
-1. **Java-focused execution:** The Code Lab and Practice Arena currently focus on Java execution and tracing.
-2. **Docker dependency:** Real-time sandboxed execution requires a working local Docker environment.
-3. **Offline demonstration:** Pre-recorded trace fixtures may be used where supported when live execution is unavailable.
-4. **Algorithm coverage:** Not every possible algorithm or data structure is implemented.
-5. **State inspection limits:** Large or deeply nested collections may be subject to inspection limits.
-6. **Environment configuration:** Authentication, persistence, and execution depend on the backend, MySQL, and required configuration being available.
+The availability of ALGOLAB features depends on the deployment
+environment and the services configured for the application.
 
-The availability of individual features depends on the current implementation and local environment.
+1. **Java-focused execution:** Code Lab and Practice Arena currently
+   focus on Java programs.
+
+2. **Backend deployment:** The frontend is deployed on Netlify, but
+   the production backend has not yet been deployed.
+
+3. **Code Lab:** The interface is available, but live Java execution
+   and tracing require a deployed and accessible backend with the
+   required Docker execution environment.
+
+4. **Practice Arena:** The interface is available, but automated
+   submission judging requires the backend and execution service.
+
+5. **Database:** Production database connectivity has not yet been
+   configured. Authentication and persistent progress features
+   that depend on the backend may therefore be unavailable.
+
+6. **Docker dependency:** Live sandboxed Java execution requires a
+   working Docker environment supported by the backend host.
+
+7. **Algorithm coverage:** The platform does not yet implement every
+   possible algorithm or data structure.
+
+8. **Execution tracing:** Trace visualization and state inspection
+   depend on the supported Java execution and tracing implementation.
+
+These limitations describe the reported deployment state. Reassess
+them after deploying the backend and database.
 
 ---
 
